@@ -17,19 +17,18 @@ site <- argv$site
 subject <- argv$subject
 session <- argv$session
 if (is.na(argv$site)) {
-  site <- c("SICNU", "TJNU")
   subject <- NA_character_
   session <- NA_character_
 } else if (is.na(subject)) {
   session <- NA_character_
 }
 walk(fs::dir_ls(here::here("R")), source)
-jobs <- tibble(site = site) |>
+jobs <- tibble(site = sites) |>
   reframe(
     list_subjects_src(site),
     .by = site
   )
-done <- tibble(site = site) |>
+done <- tibble(site = sites) |>
   reframe(
     list_subjects_raw(site),
     .by = site
