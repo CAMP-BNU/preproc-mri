@@ -1,4 +1,4 @@
-fsl_sub -l logs \
+fsl_sub -l ${PROJECT_ROOT}/logs \
     -N heudiconv_site-${SITE}_sub-${SUBJECT}_ses-${SESSION} \
     heudiconv -d ${PROJECT_ROOT}/sourcedata/${SITE}_*_CAMP_SUB{subject}_*_{session}/*/*/*.IMA \
     -o ${PROJECT_ROOT}/rawdata/${SITE} -s $SUBJECT -ss $SESSION \
