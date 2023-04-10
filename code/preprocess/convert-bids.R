@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+options(tidyverse.quiet = TRUE)
 library(argparser)
 library(tidyverse)
 p <- arg_parser("Submitting jobs to convert dicom to bids format")
