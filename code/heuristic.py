@@ -5,6 +5,13 @@ def create_key(template, outtype=('nii.gz',), annotation_classes=None):
         raise ValueError('Template must be a valid format string')
     return template, outtype, annotation_classes
 
+def find_item(info, item):
+    # do not check "item" field itself
+    item_clean = {k: v for k, v in item.items() if k != 'item'}
+    for i in range(len(info)):
+        if all(info[i][k] == v for k, v in item_clean.items()):
+            return i
+    return None
 
 def infotodict(seqinfo):
     """Heuristic evaluator for determining which runs belong where
@@ -69,6 +76,10 @@ def infotodict(seqinfo):
             parts = s.protocol_name.split('_')
             item['intended'] = task_map[parts[2]]
             item['dir'] = parts[3]
+            # fieldmaps could have exact same scans, then keep the last
+            idx = find_item(info[fmap], item)
+            if idx is not None:
+                info[fmap].pop(idx)
             info[fmap].append(item)
         elif 'bold' in s.protocol_name:
             parts = s.protocol_name.split('_')
