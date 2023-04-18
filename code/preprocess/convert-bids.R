@@ -5,12 +5,20 @@ library(tidyverse)
 p <- arg_parser("Submitting jobs to convert dicom to bids format")
 p <- add_argument(
   p,
-  c("--site", "--subject", "--session"),
+  c("--site", "--subject", "--session", "--force"),
   help = c(
     "The site of data to convert",
     "The subject id",
-    "The session number"
-  )
+    "The session number",
+    "Force conversion?"
+  ),
+  flag = c(FALSE, FALSE, FALSE, TRUE)
+)
+p <- add_argument(
+  p, "--max-jobs",
+  help = "The maximal jobs to submit. Set to 0 for unlimited jobs.",
+  default = 5,
+  short = "-n"
 )
 argv <- parse_args(p)
 site <- argv$site
@@ -33,7 +41,11 @@ done <- tibble(site = sites) |>
     list_subjects_raw(site),
     .by = site
   )
-todo <- dplyr::setdiff(jobs, done)
+if (isTRUE(argv$force)) {
+  todo <- jobs
+} else {
+  todo <- dplyr::setdiff(jobs, done)
+}
 if (!is.na(site) && site %in% todo$site) {
   todo <- filter(todo, site == .env$site)
   if (!is.na(subject) && subject %in% todo$subject) {
@@ -42,5 +54,15 @@ if (!is.na(site) && site %in% todo$site) {
       todo <- filter(todo, session == .env$session)
     }
   }
+}
+if (argv$max_jobs != 0 && nrow(todo) > argv$max_jobs) {
+  message(
+    str_glue(
+      "The required jobs number exceeding maximal allowed.",
+      "Only the first {argv$max_jobs} commited.",
+      .sep = " "
+    )
+  )
+  todo <- slice_head(todo, n = argv$max_jobs)
 }
 purrr::pwalk(todo, commit_heudiconv)
