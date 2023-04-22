@@ -5,14 +5,15 @@ library(tidyverse)
 p <- arg_parser("Submitting jobs to convert dicom to bids format")
 p <- add_argument(
   p,
-  c("--site", "--subject", "--session", "--force"),
+  c("--site", "--sid", "--session", "--force"),
   help = c(
     "The site of data to convert",
     "The subject id",
     "The session number",
     "Force conversion?"
   ),
-  flag = c(FALSE, FALSE, FALSE, TRUE)
+  flag = c(FALSE, FALSE, FALSE, TRUE),
+  short = c("-t", "-s", "-e", "-f")
 )
 p <- add_argument(
   p, "--max-jobs",
@@ -20,37 +21,47 @@ p <- add_argument(
   default = 5,
   short = "-n"
 )
+p <- add_argument(
+  p, "--dry-run",
+  help = "Do not execute the jobs?",
+  flag = TRUE
+)
 argv <- parse_args(p)
 site <- argv$site
-subject <- argv$subject
+sid <- argv$sid
 session <- argv$session
 if (is.na(argv$site)) {
-  subject <- NA_character_
+  sid <- NA_character_
   session <- NA_character_
-} else if (is.na(subject)) {
+} else if (is.na(sid)) {
   session <- NA_character_
 }
 walk(fs::dir_ls(here::here("R")), source)
-jobs <- tibble(site = sites) |>
-  reframe(
-    list_subjects_src(site),
-    .by = site
-  )
-done <- tibble(site = sites) |>
-  reframe(
-    list_subjects_raw(site),
-    .by = site
-  )
+jobs <- list_jobs_whole()
+done <- list_jobs_done()
 if (isTRUE(argv$force)) {
   todo <- jobs
 } else {
-  todo <- dplyr::setdiff(jobs, done)
+  todo <- jobs |>
+    anti_join(
+      done,
+      by = c("site", "sid", "session")
+    )
 }
-if (!is.na(site) && site %in% todo$site) {
+if (!is.na(site)) {
+  if (!site %in% todo$site) {
+    stop("No unconverted data from given site")
+  }
   todo <- filter(todo, site == .env$site)
-  if (!is.na(subject) && subject %in% todo$subject) {
-    todo <- filter(todo, subject == .env$subject)
-    if (!is.na(session) && session %in% todo$session) {
+  if (!is.na(sid)) {
+    if (!sid %in% todo$sid) {
+      stop("No unconverted data from given site and sid")
+    }
+    todo <- filter(todo, sid == .env$sid)
+    if (!is.na(session)) {
+      if (!session %in% todo$session) {
+        stop("No unconverted data from given site, sid and session")
+      }
       todo <- filter(todo, session == .env$session)
     }
   }
@@ -58,11 +69,27 @@ if (!is.na(site) && site %in% todo$site) {
 if (argv$max_jobs != 0 && nrow(todo) > argv$max_jobs) {
   message(
     str_glue(
-      "The required jobs number exceeding maximal allowed.",
+      "The required jobs number ({nrow(todo)})",
+      "exceeded maximal allowed.",
       "Only the first {argv$max_jobs} commited.",
       .sep = " "
     )
   )
   todo <- slice_head(todo, n = argv$max_jobs)
 }
-purrr::pwalk(todo, commit_heudiconv)
+if (nrow(todo) > 0) {
+  if (argv$dry_run) {
+    message(
+      str_glue(
+        "There are {nrow(todo)} jobs to be commited.",
+        "As follows:",
+        .sep = " "
+      )
+    )
+    print(todo)
+  } else {
+    purrr::pwalk(todo, commit_heudiconv)
+  }
+} else {
+  message("All jobs are done! No jobs were commited.")
+}
