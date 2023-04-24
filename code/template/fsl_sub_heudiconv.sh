@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
 # heudiconv setup
-: ${HEUDICONV_CONTAINER:=/home/shaoxuhao2008/containers/neurobox-2.sif}
+: ${HEUDICONV_CONTAINER:=/opt/fmritools/containers/heudiconv_0.12.2.sif}
 : ${HEUDICONV_CMD:=${SINGULARITY_CMD} exec -c -e -B /seastor:/seastor ${HEUDICONV_CONTAINER} heudiconv}
 # get the path where stores current script
 DIR_SELF=`dirname $0`
