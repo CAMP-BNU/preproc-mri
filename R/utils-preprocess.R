@@ -13,7 +13,8 @@ list_jobs_whole <- function() {
 list_jobs_done <- function(check_file_sum = FALSE) {
   tibble(
     folder = fs::dir_ls(
-      path_raw, regexp = "sub", type = "directory"
+      path_raw,
+      regexp = "sub", type = "directory"
     )
   ) |>
     mutate(
@@ -26,37 +27,34 @@ list_jobs_done <- function(check_file_sum = FALSE) {
     ) |>
     unchop(dir_ses) |>
     mutate(
-      map(dir_ses, ~ is_done_session(., check_file_sum)) |>
-        list_rbind()
+      session = str_extract(dir_ses, "\\d{1}$"),
+      is_done = map2_lgl(
+        dir_ses, session,
+        ~ is_done_session(.x, .y, check_file_sum)
+      )
     ) |>
     filter(is_done) |>
     select(site, sid, session)
 }
 
-is_done_session <- function(path, check_file_sum = FALSE) {
+is_done_session <- function(path, session, check_file_sum = FALSE) {
   file_sum_min <- list(
     "1" = c(1, 4, 4, 14, 18),
     "2" = c(1, 2, 12, 21)
   )
-  session <- str_extract(path, "\\d{1}$")
-  if (check_file_sum) {
-    file_sum <- fs::dir_ls(
-      path,
-      recurse = TRUE,
-      type = "file"
-    ) |>
-      fs::path_dir() |>
-      table()
-    file_sum_target <- file_sum_min[[session]]
-    is_done <- length(file_sum) == length(file_sum_target) &&
-      all(file_sum >= file_sum_target)
-  } else {
-    is_done <- TRUE
+  if (!check_file_sum) {
+    return(TRUE)
   }
-  tibble(
-    session = session,
-    is_done = is_done
-  )
+  file_sum <- fs::dir_ls(
+    path,
+    recurse = TRUE,
+    type = "file"
+  ) |>
+    fs::path_dir() |>
+    table()
+  file_sum_target <- file_sum_min[[session]]
+  length(file_sum) == length(file_sum_target) &&
+    all(file_sum >= file_sum_target)
 }
 
 commit_heudiconv <- function(subject, session, ...) {
