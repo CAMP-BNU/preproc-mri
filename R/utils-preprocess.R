@@ -68,5 +68,23 @@ commit_heudiconv <- function(subject, session, ...) {
       .sep = " "
     )
   )
+  heudiconv_cache <- check_heudiconv_cache(subject, session)
+  if (heudiconv_cache) {
+    fs::dir_delete(names(heudiconv_cache))
+  }
   system_with_env(tmpl_heudiconv, env)
+}
+
+check_heudiconv_cache <- function(subject, session) {
+  site <- str_extract(subject, "^[A-Z]+")
+  sid <- str_extract(subject, "(?<=SUB)\\d{3}")
+  fs::dir_exists(
+    fs::path(
+      path_raw,
+      ".heudiconv",
+      str_glue("{site}{sid}"),
+      str_glue("ses-{session}"),
+      "info"
+    )
+  )
 }
