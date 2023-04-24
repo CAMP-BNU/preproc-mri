@@ -1,5 +1,13 @@
 import os
 
+# Dictionary to specify options for the `populate_intended_for`.
+# Valid options are defined in 'bids.py' (for 'matching_parameters':
+# ['Shims', 'ImagingVolume',]; for 'criterion': ['First', 'Closest']
+POPULATE_INTENDED_FOR_OPTS = {
+    "matching_parameters": "CustomAcquisitionLabel",
+    "criterion": "Closest",
+}
+
 def create_key(template, outtype=('nii.gz',), annotation_classes=None):
     if template is None or not template:
         raise ValueError('Template must be a valid format string')
@@ -34,7 +42,7 @@ def infotodict(seqinfo):
     t2w_hp = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_acq-HiResHp_T2w')
 
     # diffusion images
-    dwi = create_key('sub-{subject}/{session}/dwi/sub-{subject}_{session}_dir-{dir}_dwi')
+    dwi = create_key('sub-{subject}/{session}/dwi/sub-{subject}_{session}_acq-dwi_dir-{dir}_dwi')
 
     info = {
         fmap: [],
