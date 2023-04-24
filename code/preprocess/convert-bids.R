@@ -2,6 +2,7 @@
 options(tidyverse.quiet = TRUE)
 library(argparser)
 library(tidyverse)
+walk(fs::dir_ls(here::here("R")), source)
 p <- arg_parser("Submitting jobs to convert dicom to bids format")
 p <- add_argument(
   p,
@@ -39,7 +40,6 @@ if (is.na(argv$site)) {
 } else if (is.na(sid)) {
   session <- NA_character_
 }
-walk(fs::dir_ls(here::here("R")), source)
 jobs <- list_jobs_whole()
 done <- list_jobs_done(argv$rerun_invalidate)
 if (isTRUE(argv$force)) {
