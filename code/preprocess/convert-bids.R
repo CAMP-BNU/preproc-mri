@@ -5,15 +5,14 @@ library(tidyverse)
 p <- arg_parser("Submitting jobs to convert dicom to bids format")
 p <- add_argument(
   p,
-  c("--site", "--sid", "--session", "--force"),
+  c("--site", "--sid", "--session"),
   help = c(
     "The site of data to convert",
     "The subject id",
-    "The session number",
-    "Force conversion?"
+    "The session number"
   ),
-  flag = c(FALSE, FALSE, FALSE, TRUE),
-  short = c("-t", "-s", "-e", "-f")
+  flag = c(FALSE, FALSE, FALSE),
+  short = c("-t", "-s", "-e")
 )
 p <- add_argument(
   p, "--max-jobs",
@@ -22,9 +21,13 @@ p <- add_argument(
   short = "-n"
 )
 p <- add_argument(
-  p, "--dry-run",
-  help = "Do not execute the jobs?",
-  flag = TRUE
+  p, c("--force", "--rerun-invalidate", "--dry-run"),
+  help = c(
+    "Do not execute the jobs?",
+    "Try to re-run all invalidated subjects?",
+    "Force conversion?"
+  ),
+  flag = c(TRUE, TRUE, TRUE)
 )
 argv <- parse_args(p)
 site <- argv$site
@@ -38,7 +41,7 @@ if (is.na(argv$site)) {
 }
 walk(fs::dir_ls(here::here("R")), source)
 jobs <- list_jobs_whole()
-done <- list_jobs_done()
+done <- list_jobs_done(argv$rerun_invalidate)
 if (isTRUE(argv$force)) {
   todo <- jobs
 } else {
