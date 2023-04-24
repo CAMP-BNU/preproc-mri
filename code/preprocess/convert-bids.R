@@ -40,8 +40,8 @@ if (is.na(argv$site)) {
 } else if (is.na(sid)) {
   session <- NA_character_
 }
-jobs <- list_jobs_whole()
-done <- list_jobs_done(argv$rerun_invalidate)
+jobs <- list_jobs_whole_heudiconv()
+done <- list_jobs_done_heudiconv(argv$rerun_invalidate)
 if (isTRUE(argv$force)) {
   todo <- jobs
 } else {
