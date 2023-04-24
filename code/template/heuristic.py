@@ -71,16 +71,13 @@ def infotodict(seqinfo):
         * series_description
         * image_type
         """
+        key = None
         item = {'item': s.series_id}
         if s.protocol_name.startswith('ep2d_se'):
             parts = s.protocol_name.split('_')
             item['intended'] = task_map[parts[2]]
             item['dir'] = parts[3]
-            # fieldmaps could have exact same scans, then keep the last
-            idx = find_item(info[fmap], item)
-            if idx is not None:
-                info[fmap].pop(idx)
-            info[fmap].append(item)
+            key = fmap
         elif 'bold' in s.protocol_name:
             parts = s.protocol_name.split('_')
             if s.dim4 == int(parts[4]):
@@ -88,18 +85,24 @@ def infotodict(seqinfo):
                 item['task'] = task_map[task_run[:2]]
                 item['run'] = task_run[-1]
                 item['dir'] = parts[5]
-                info[bold].append(item)
+                key = bold
         elif 't1_mprage_sag_iso' in s.protocol_name:
-            info[t1w].append(item)
+            key = t1w
         elif 't2_spc_sag_iso' in s.protocol_name:
-            info[t2w].append(item)
+            key = t2w
         elif s.protocol_name == 'TSE_HiResHp' and 'NORM' in s.image_type:
-            info[t2w_hp].append(item)
+            key = t2w_hp
         elif s.protocol_name == 'sms4_diff_CMR130_fastMode_PA':
             item['dir'] = 'PA'
-            info[dwi].append(item)
+            key = dwi
         elif s.protocol_name == 'sms4_diff_CMR130_fastMode_B0_AP':
             item['intended'] = 'dwi'
             item['dir'] = 'AP'
-            info[fmap].append(item)
+            key = fmap
+        # when found duplicate scans, then keep the last
+        if key is not None:
+            idx = find_item(info[key], item)
+            if idx is not None:
+                info[key].pop(idx)
+            info[key].append(item)
     return info
