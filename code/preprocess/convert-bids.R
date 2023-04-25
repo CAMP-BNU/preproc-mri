@@ -40,12 +40,10 @@ if (is.na(argv$site)) {
 } else if (is.na(sid)) {
   session <- NA_character_
 }
-jobs <- list_jobs_whole_heudiconv()
+todo <- list_jobs_whole_heudiconv()
 done <- list_jobs_done_heudiconv(argv$rerun_invalidate)
-if (isTRUE(argv$force)) {
-  todo <- jobs
-} else {
-  todo <- jobs |>
+if (!isTRUE(argv$force)) {
+  todo <- todo |>
     anti_join(
       done,
       by = c("site", "sid", "session")
