@@ -1,7 +1,4 @@
-list_jobs_whole_mriqc <- function(...) {
-  list_jobs_done_heudiconv(...) |>
-    mutate(subject = str_glue("{site}{sid}"), .before = 1L)
-}
+list_jobs_whole_mriqc <- list_jobs_done_heudiconv
 
 list_jobs_done_mriqc <- function() {
   fs::path(path_derivative, "mriqc") |>

@@ -18,8 +18,9 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
     )
   ) |>
     mutate(
-      site = str_extract(fs::path_file(folder), "(?<=-)[A-Z]+"),
-      sid = str_extract(fs::path_file(folder), "\\d{3}"),
+      subject = str_extract(fs::path_file(folder), "(?<=sub-).+"),
+      site = str_extract(subject, "^[A-Z]+"),
+      sid = str_extract(subject, "\\d{3}"),
       dir_ses = map(
         folder,
         ~ fs::dir_ls(., regexp = "sub")
@@ -34,7 +35,7 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
       )
     ) |>
     filter(is_done) |>
-    select(site, sid, session)
+    select(subject, site, sid, session)
 }
 
 is_done_heudiconv <- function(path, session, check_file_sum = FALSE) {

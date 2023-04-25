@@ -6,7 +6,8 @@ walk(fs::dir_ls(here::here("R")), source)
 argv <- arg_parser("Submitting jobs to do mriqc for bids data") |>
   add_argument(
     "--subject",
-    "The subject identifier in bids. If specified, site and sid will be ignored.",
+    paste("The subject identifier in bids.",
+          "If specified, `site` and `sid` will be ignored."),
     short = "-s"
   ) |>
   add_argument("--site", "The site of data", short = "-t") |>
@@ -39,13 +40,15 @@ site <- argv$site
 sid <- argv$sid
 session <- argv$session
 if (!is.na(subject)) {
-  site <- str_extract(subject, "^[A-Z]+")
-  sid <- str_extract(subject, "\\d{3}$")
-} else if (is.na(argv$site)) {
+  site <- NA_character_
   sid <- NA_character_
-  session <- NA_character_
-} else if (is.na(sid)) {
-  session <- NA_character_
+} else {
+  if (is.na(argv$site)) {
+    sid <- NA_character_
+    session <- NA_character_
+  } else if (is.na(sid)) {
+    session <- NA_character_
+  }
 }
 todo <- list_jobs_whole_mriqc()
 done <- list_jobs_done_mriqc()
@@ -56,23 +59,30 @@ if (!isTRUE(argv$force)) {
       by = c("subject", "session")
     )
 }
-if (!is.na(site)) {
-  if (!site %in% todo$site) {
-    stop("No unchecked data from given site")
+if (!is.na(subject)) {
+  if (!subject %in% todo$subject) {
+    stop("No unchecked data from given subject")
   }
-  todo <- filter(todo, site == .env$site)
-  if (!is.na(sid)) {
-    if (!sid %in% todo$sid) {
-      stop("No unchecked data from given site and sid")
+  todo <- filter(todo, subject == .env$subject)
+} else {
+  if (!is.na(site)) {
+    if (!site %in% todo$site) {
+      stop("No unchecked data from given site")
     }
-    todo <- filter(todo, sid == .env$sid)
-    if (!is.na(session)) {
-      if (!session %in% todo$session) {
-        stop("No unchecked data from given site, sid and session")
+    todo <- filter(todo, site == .env$site)
+    if (!is.na(sid)) {
+      if (!sid %in% todo$sid) {
+        stop("No unchecked data from given site and sid")
       }
-      todo <- filter(todo, session == .env$session)
+      todo <- filter(todo, sid == .env$sid)
     }
   }
+}
+if (!is.na(session)) {
+  if (!session %in% todo$session) {
+    stop("No unchecked data from given subject and session")
+  }
+  todo <- filter(todo, session == .env$session)
 }
 if (argv$max_jobs != 0 && nrow(todo) > argv$max_jobs) {
   message(
