@@ -85,6 +85,7 @@ if (nrow(todo) > 0) {
         .sep = " "
       )
     )
+    options(pillar.print_max = Inf)
     print(todo)
   } else {
     purrr::pwalk(todo, commit_heudiconv)
