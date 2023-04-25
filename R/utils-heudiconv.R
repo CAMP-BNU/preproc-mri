@@ -19,7 +19,7 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
   ) |>
     mutate(
       site = str_extract(fs::path_file(folder), "(?<=-)[A-Z]+"),
-      sid = str_extract(fs::path_file(folder), "\\d{3}$"),
+      sid = str_extract(fs::path_file(folder), "\\d{3}"),
       dir_ses = map(
         folder,
         ~ fs::dir_ls(., regexp = "sub")
@@ -71,23 +71,25 @@ commit_heudiconv <- function(subject, session, ...) {
       .sep = " "
     )
   )
-  heudiconv_cache <- check_heudiconv_cache(subject, session)
-  if (heudiconv_cache) {
-    fs::dir_delete(names(heudiconv_cache))
-  }
+  remove_heudiconv_cache(subject, session)
   system_with_env(tmpl_heudiconv, env)
 }
 
-check_heudiconv_cache <- function(subject, session) {
+remove_heudiconv_cache <- function(subject, session) {
   site <- str_extract(subject, "^[A-Z]+")
   sid <- str_extract(subject, "(?<=SUB)\\d{3}")
-  fs::dir_exists(
-    fs::path(
-      path_raw,
-      ".heudiconv",
-      str_glue("{site}{sid}"),
-      str_glue("ses-{session}"),
-      "info"
-    )
+  suffix <- match_scanner_suffix(site, sid)
+  if (length(suffix) == 0) {
+    return(invisible())
+  }
+  heudiconv_cache <- fs::path(
+    path_raw,
+    ".heudiconv",
+    str_glue("{site}{sid}{suffix}"),
+    str_glue("ses-{session}"),
+    "info"
   )
+  if (fs::dir_exists(heudiconv_cache)) {
+    fs::dir_delete(heudiconv_cache)
+  }
 }

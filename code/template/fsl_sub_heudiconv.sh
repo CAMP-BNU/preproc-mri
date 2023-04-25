@@ -2,7 +2,7 @@
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
 # heudiconv setup
 : ${HEUDICONV_CONTAINER:=/opt/fmritools/containers/heudiconv-0.12.2.sif}
-: ${HEUDICONV_CMD:=${SINGULARITY_CMD} exec -c -e -B /seastor:/seastor ${HEUDICONV_CONTAINER} heudiconv}
+: ${HEUDICONV_CMD:=${SINGULARITY_CMD} exec -c -B /seastor:/seastor ${HEUDICONV_CONTAINER} heudiconv}
 # get the path where stores current script
 DIR_SELF=`dirname $0`
 fsl_sub -l ${PROJECT_ROOT}/logs \
