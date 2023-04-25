@@ -5,7 +5,7 @@ library(tidyverse)
 walk(fs::dir_ls(here::here("R")), source)
 argv <- arg_parser("Submitting jobs to convert dicom to bids format") |>
   add_argument("--site", "The site of data to convert", short = "-t") |>
-  add_argument("--sid", "The subject id", short = "-s") |>
+  add_argument("--sid", "The subject id", short = "-i") |>
   add_argument("--session", "The session number", short = "-e") |>
   add_argument(
     "--max-jobs",
