@@ -3,34 +3,32 @@ options(tidyverse.quiet = TRUE)
 library(argparser)
 library(tidyverse)
 walk(fs::dir_ls(here::here("R")), source)
-p <- arg_parser("Submitting jobs to convert dicom to bids format")
-p <- add_argument(
-  p,
-  c("--site", "--sid", "--session"),
-  help = c(
-    "The site of data to convert",
-    "The subject id",
-    "The session number"
-  ),
-  flag = c(FALSE, FALSE, FALSE),
-  short = c("-t", "-s", "-e")
-)
-p <- add_argument(
-  p, "--max-jobs",
-  help = "The maximal jobs to submit. Set to 0 for unlimited jobs.",
-  default = 5,
-  short = "-n"
-)
-p <- add_argument(
-  p, c("--force", "--rerun-invalidate", "--dry-run"),
-  help = c(
-    "Do not execute the jobs?",
-    "Try to re-run all invalidated subjects?",
-    "Force conversion?"
-  ),
-  flag = c(TRUE, TRUE, TRUE)
-)
-argv <- parse_args(p)
+argv <- arg_parser("Submitting jobs to convert dicom to bids format") |>
+  add_argument("--site", "The site of data to convert", short = "-t") |>
+  add_argument("--sid", "The subject id", short = "-s") |>
+  add_argument("--session", "The session number", short = "-e") |>
+  add_argument(
+    "--max-jobs",
+    "The maximal jobs to submit. Set to 0 for unlimited jobs.",
+    default = 5,
+    short = "-n"
+  ) |>
+  add_argument(
+    "--force",
+    "Force run conversion? [default: FALSE]",
+    flag = TRUE
+  ) |>
+  add_argument(
+    "--rerun-invalidate",
+    "Try to re-run all invalidated subjects? [default: FALSE]",
+    flag = TRUE
+  ) |>
+  add_argument(
+    "--dry-run",
+    "Skip really executing the jobs? [default: FALSE]",
+    flag = TRUE
+  ) |>
+  parse_args()
 site <- argv$site
 sid <- argv$sid
 session <- argv$session
