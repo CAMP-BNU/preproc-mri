@@ -3,9 +3,9 @@ list_jobs_whole_heudiconv <- function() {
     fs::dir_ls(type = "directory") |>
     fs::path_file()
   tibble(
-    site = str_extract(folders, "^[A-Z]+"),
     subject = str_extract(folders, ".+SUB\\d{3}"),
-    sid = str_extract(folders, "(?<=SUB)\\d{3}"),
+    site = str_extract(subject, "^[A-Z]+"),
+    sid = str_extract(subject, "\\d{3}$"),
     session = str_extract(folders, "\\d{1}$")
   )
 }
