@@ -11,5 +11,5 @@ fsl_sub -l ${PROJECT_ROOT}/logs \
     -d ${PROJECT_ROOT}/sourcedata/{subject}_*_{session}/*/*/*.IMA \
     -o ${PROJECT_ROOT}/rawdata -s $SUBJECT -ss $SESSION \
     -f ${DIR_SELF}/heuristic.py \
-    --anon-cmd ${DIR_SELF}/minimize_subid.py \
+    --anon-cmd ${DIR_SELF}/format_subject.py \
     -c dcm2niix -b --overwrite --minmeta

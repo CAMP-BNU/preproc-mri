@@ -4,13 +4,15 @@ import sys
 import csv
 subject = sys.argv[-1]
 
-# new subject label is site + sid + scanner(can be empty)
+# new subject label is site + sid + suffix(for scanner, can be empty)
 parts = subject.split("_")
 site = parts[0]
 sid = parts[3][3:]
-# scanner info for TJNU
+
+# prepare scanner suffix
 suffix = None
 if site == "TJNU":
+    # scanner info for TJNU
     scanner_file = os.path.join(os.getenv("PROJECT_ROOT"), "sourcedata", "tjnu-scanner.csv")
     with open(scanner_file, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
