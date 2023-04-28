@@ -4,7 +4,7 @@
 : ${MRIQC_CONTAINER:=/opt/fmritools/containers/mriqc-23.1.0rc0.sif}
 # note $HOME is used for cached templateflow
 : ${MARQC_CMD:=${SINGULARITY_CMD} exec -c -e -B /seastor:/seastor -B /home/zhangliang:/home/zhangliang ${MRIQC_CONTAINER} mriqc}
-: ${N_THREADS:=4}
+: ${N_THREADS:=2}
 
 echo [`date "+%Y-%m-%d %H:%M:%S"`] "Begin mriqc for subject: ${SUBJECT}, session: ${SESSION}."
 ${MARQC_CMD} \
