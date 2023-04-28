@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#$ -N mriqc
+#$ -o { project_root }/logs
+#$ -j y
+#$ -t 1:{ num_jobs }
+#$ -tc { max_jobs }
+
+export PROJECT_ROOT={ project_root }
+read SUBJECT SESSION <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1, $2}}' { file_sublist })
+export SUBJECT SESSION
+
+{ project_root }/code/template/exec_mriqc.sh
+# clean cache
+find { project_root }/temp/mriqc -name *sub-${{SUBJECT}}*ses-${{SESSION}}* -type f -delete

@@ -15,8 +15,8 @@ argv <- arg_parser("Submitting jobs to do mriqc for bids data") |>
   add_argument("--session", "The session number", short = "-e") |>
   add_argument(
     "--max-jobs",
-    "The maximal jobs to submit. Set to 0 for unlimited jobs.",
-    default = 5,
+    "The maximal running jobs.",
+    default = 10,
     short = "-n"
   ) |>
   add_argument(
@@ -39,6 +39,7 @@ subject <- argv$subject
 site <- argv$site
 sid <- argv$sid
 session <- argv$session
+max_jobs <- argv$max_jobs
 if (!is.na(subject)) {
   site <- NA_character_
   sid <- NA_character_
@@ -84,22 +85,12 @@ if (!is.na(session)) {
   }
   todo <- filter(todo, session == .env$session)
 }
-if (argv$max_jobs != 0 && nrow(todo) > argv$max_jobs) {
-  message(
-    str_glue(
-      "The required jobs number ({nrow(todo)})",
-      "exceeded maximal allowed.",
-      "Only the first {argv$max_jobs} commited.",
-      .sep = " "
-    )
-  )
-  todo <- slice_head(todo, n = argv$max_jobs)
-}
-if (nrow(todo) > 0) {
+num_jobs <- nrow(todo)
+if (num_jobs > 0) {
   if (argv$dry_run) {
     message(
       str_glue(
-        "There are {nrow(todo)} jobs to be commited.",
+        "There are {num_jobs} jobs to be commited.",
         "As follows:",
         .sep = " "
       )
@@ -107,7 +98,7 @@ if (nrow(todo) > 0) {
     options(pillar.print_max = Inf)
     print(todo)
   } else {
-    purrr::pwalk(todo, commit_mriqc)
+    commit_mriqc(todo)
   }
 } else {
   message("All jobs are done! No jobs were commited.")

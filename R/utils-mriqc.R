@@ -12,30 +12,17 @@ list_jobs_done_mriqc <- function() {
     )
 }
 
-commit_mriqc <- function(subject, session, ...) {
-  tmpl_mriqc <- fs::path(path_tmpl, "fsl_sub_mriqc.sh")
-  env <- list(
-    PROJECT_ROOT = project_root,
-    SUBJECT = subject,
-    SESSION = session
-  )
-  remove_mriqc_cache(subject, session)
-  message(
-    stringr::str_glue(
-      "Commiting job with:",
-      "SUBJECT={subject}, SESSION={session}",
-      .sep = " "
-    )
-  )
-  system_with_env(tmpl_mriqc, env)
-}
-
-remove_mriqc_cache <- function(subject, session) {
-  fs::path(path_temp, "mriqc") |>
-    fs::dir_ls(
-      type = "file",
-      regexp = str_glue("sub-{subject}.*ses-{session}"),
-      recurse = TRUE
-    ) |>
-    fs::file_delete()
+commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
+  rlang::check_dots_empty()
+  file_sublist <- file_sublist %||% fs::path(path_temp, "sublist")
+  sublist |>
+    select(subject, session) |>
+    write_delim(file_sublist, col_names = FALSE)
+  script_qsub <- tempfile()
+  script_content <- fs::path(path_tmpl, "mriqc.tmpl.qsub") |>
+    read_file() |>
+    str_glue()
+  write_lines(script_content, script_qsub)
+  message(str_glue("Commiting job array of { num_jobs } jobs."))
+  system(str_glue("qsub { script_qsub }"))
 }
