@@ -6,6 +6,7 @@
 : ${MARQC_CMD:=${SINGULARITY_CMD} exec -c -e -B /seastor:/seastor -B /home/zhangliang:/home/zhangliang ${MRIQC_CONTAINER} mriqc}
 : ${N_THREADS:=4}
 
+echo [`date "+%Y-%m-%d %H:%M:%S"`] "Begin mriqc for subject: ${SUBJECT}, session: ${SESSION}."
 ${MARQC_CMD} \
     ${PROJECT_ROOT}/rawdata ${PROJECT_ROOT}/derivatives/mriqc participant \
     `# filtering subject` \
