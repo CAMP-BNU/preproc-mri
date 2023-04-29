@@ -1,15 +1,23 @@
 list_jobs_whole_mriqc <- list_jobs_done_heudiconv
 
-list_jobs_done_mriqc <- function() {
-  fs::path(path_derivative, "mriqc") |>
-    fs::dir_ls(type = "directory", regexp = "sub") |>
-    map(~fs::dir_ls(., type = "directory", regexp = "ses")) |>
-    enframe(name = "subject", value = "session") |>
-    unchop(session) |>
-    mutate(
-      subject = str_extract(subject, "(?<=sub-).+"),
-      session = str_extract(session, "(?<=ses-).+")
-    )
+list_jobs_done_mriqc <- function(check_file_sum = FALSE) {
+  # 8 files are generated for each session
+  num_files_ses <- 8L
+  col_names_chk <- c("subject", "session")
+  files_mriqc <- fs::path(path_derivative, "mriqc") |>
+    fs::dir_ls(type = "file", regexp = "sub") |>
+    str_match("sub-([:alnum:]+)_ses-(\\d)") |>
+    as_tibble(.name_repair = ~ c("whole", col_names_chk)) |>
+    count(pick(all_of(col_names_chk)))
+  if (check_file_sum) {
+    files_mriqc |>
+      filter(n == num_files_ses) |>
+      select(all_of(col_names_chk))
+  } else {
+    files_mriqc |>
+      filter(n >= 1L) |>
+      select(all_of(col_names_chk))
+  }
 }
 
 commit_mriqc <- function(sublist, file_sublist = NULL, ...) {

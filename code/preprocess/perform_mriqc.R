@@ -52,7 +52,7 @@ if (!is.na(subject)) {
   }
 }
 todo <- list_jobs_whole_mriqc()
-done <- list_jobs_done_mriqc()
+done <- list_jobs_done_mriqc(argv$rerun_invalidate)
 if (!isTRUE(argv$force)) {
   todo <- todo |>
     anti_join(
