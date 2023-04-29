@@ -22,7 +22,16 @@ list_jobs_done_mriqc <- function(check_file_sum = FALSE) {
 
 commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
   rlang::check_dots_empty()
-  file_sublist <- file_sublist %||% fs::path(path_temp, "sublist")
+  if (is.null(file_sublist)) {
+    dir_file_sublist <- fs::path(path_temp, "mriqc", "qsub")
+    if (!fs::dir_exists(dir_file_sublist)) {
+      fs::dir_create(dir_file_sublist)
+    }
+    file_sublist <- fs::path(
+      dir_file_sublist,
+      format(now(), "sublist-%Y%m%d_%H%M%S")
+    )
+  }
   sublist |>
     select(subject, session) |>
     write_delim(file_sublist, col_names = FALSE)
@@ -32,5 +41,6 @@ commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
     str_glue()
   write_lines(script_content, script_qsub)
   message(str_glue("Commiting job array of { num_jobs } jobs."))
+  message(str_glue("See file {file_sublist} for full list of subjects."))
   system(str_glue("qsub { script_qsub }"))
 }
