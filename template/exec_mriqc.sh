@@ -12,7 +12,7 @@ ${MARQC_CMD} \
     --participant_label ${SUBJECT} \
     --session-id ${SESSION} \
     `# instrumental options` \
-    -w ${PROJECT_ROOT}/temp/mriqc \
+    -w ${PROJECT_ROOT}/tmp/mriqc \
     --write-graph --verbose-reports --no-sub \
     `# performance related` \
     --n_procs $N_THREADS --ants-nthreads $N_THREADS --mem_gb 4000 -f \

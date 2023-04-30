@@ -13,7 +13,7 @@ fsl_sub -l ${PROJECT_ROOT}/logs \
     --participant_label ${SUBJECT} \
     --session-id ${SESSION} \
     `# instrumental options` \
-    -w ${PROJECT_ROOT}/temp/mriqc \
+    -w ${PROJECT_ROOT}/tmp/mriqc \
     --write-graph --verbose-reports --no-sub \
     `# performance related` \
     --n_procs $N_THREADS --mem_gb 4000 --ants-nthreads $N_THREADS \
