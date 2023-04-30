@@ -10,6 +10,6 @@ export PROJECT_ROOT={ project_root }
 read SUBJECT SESSION <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1, $2}}' { file_sublist })
 export SUBJECT SESSION
 
-{ project_root }/code/template/exec_mriqc.sh
+{ path_tmpl }/exec_mriqc.sh
 # clean cache
-find { project_root }/temp/mriqc -name *sub-${{SUBJECT}}*ses-${{SESSION}}* -type f -delete
+find { path_temp }/mriqc -name *sub-${{SUBJECT}}*ses-${{SESSION}}* -type f -delete
