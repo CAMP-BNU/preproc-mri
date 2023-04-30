@@ -1,4 +1,3 @@
-project_root <- here::here()
 path_src <- fs::path(project_root, "sourcedata")
 path_raw <- fs::path(project_root, "rawdata")
 path_derivative <- fs::path(project_root, "derivatives")

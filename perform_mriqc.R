@@ -2,7 +2,8 @@
 options(tidyverse.quiet = TRUE)
 library(argparser)
 library(tidyverse)
-walk(fs::dir_ls(here::here("R")), source)
+project_root <- box::file()
+walk(fs::dir_ls(fs::path(project_root, "R")), source)
 argv <- arg_parser("Submitting jobs to do mriqc for bids data") |>
   add_argument(
     "--subject",
