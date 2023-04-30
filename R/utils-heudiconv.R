@@ -59,7 +59,7 @@ is_done_heudiconv <- function(path, session, check_file_sum = FALSE) {
 }
 
 commit_heudiconv <- function(subject, session, ...) {
-  tmpl_heudiconv <- fs::path(path_tmpl, "fsl_sub_heudiconv.sh")
+  tmpl_heudiconv <- fs::path(path_template, "fsl_sub_heudiconv.sh")
   env <- list(
     PROJECT_ROOT = project_root,
     SUBJECT = subject,
