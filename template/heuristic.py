@@ -101,8 +101,9 @@ def infotodict(seqinfo):
         elif s.protocol_name == 'TSE_HiResHp' and 'NORM' in s.image_type:
             key = t2w_hp
         elif s.protocol_name == 'sms4_diff_CMR130_fastMode_PA':
-            item['dir'] = 'PA'
-            key = dwi
+            if s.dim4 == 130:
+                item['dir'] = 'PA'
+                key = dwi
         elif s.protocol_name == 'sms4_diff_CMR130_fastMode_B0_AP':
             item['intended'] = 'dwi'
             item['dir'] = 'AP'
