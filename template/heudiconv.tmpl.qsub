@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#$ -N heudiconv
+#$ -o { project_root }/logs
+#$ -q long.q
+#$ -j y
+#$ -t 1:{ num_jobs }
+#$ -tc { max_jobs }
+
+export PROJECT_ROOT={ project_root }
+read SUBJECT SESSION <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1, $2}}' { file_sublist })
+export SUBJECT SESSION
+
+# clean cache if exists
+SUBLABEL={ path_template }/format_subject.py ${{SUBJECT}}
+cache_dir={ path_raw }/.heudiconv/${{SUBLABEL}}/ses-${{SESSION}}
+if [ -d ${{cache_dir}} ]; then
+    rm -rf ${{cache_dir}}
+fi
+echo [`date "+%Y-%m-%d %H:%M:%S"`] "Begin heudiconv for subject: ${{SUBJECT}}, session: ${{SESSION}}."
+{ path_template }/exec_heudiconv.sh
+echo [`date "+%Y-%m-%d %H:%M:%S"`] "End heudiconv for subject: ${{SUBJECT}}, session: ${{SESSION}}."

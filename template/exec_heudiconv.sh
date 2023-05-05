@@ -5,9 +5,8 @@
 : ${HEUDICONV_CMD:=${SINGULARITY_CMD} exec -c -B /seastor:/seastor ${HEUDICONV_CONTAINER} heudiconv}
 # get the path where stores current script
 DIR_SELF=`dirname $0`
-fsl_sub -l ${PROJECT_ROOT}/logs \
-    -N heudiconv_sub-${SUBJECT}_ses-${SESSION} \
-    ${HEUDICONV_CMD} \
+
+${HEUDICONV_CMD} \
     -d ${PROJECT_ROOT}/sourcedata/{subject}_*_{session}/*/*/*.IMA \
     -o ${PROJECT_ROOT}/rawdata -s $SUBJECT -ss $SESSION \
     -f ${DIR_SELF}/heuristic.py \
