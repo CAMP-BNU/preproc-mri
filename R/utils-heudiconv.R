@@ -58,39 +58,27 @@ is_done_heudiconv <- function(path, session, check_file_sum = FALSE) {
     all(file_sum == file_sum_target)
 }
 
-commit_heudiconv <- function(subject, session, ...) {
-  tmpl_heudiconv <- fs::path(path_template, "fsl_sub_heudiconv.sh")
-  env <- list(
-    PROJECT_ROOT = project_root,
-    SUBJECT = subject,
-    SESSION = session
-  )
-  message(
-    stringr::str_glue(
-      "Commiting job with:",
-      "SUBJECT={subject}, SESSION={session}",
-      .sep = " "
+commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
+  rlang::check_dots_empty()
+  if (is.null(file_sublist)) {
+    dir_file_sublist <- fs::path(path_tmp, "qsub", "heudiconv")
+    if (!fs::dir_exists(dir_file_sublist)) {
+      fs::dir_create(dir_file_sublist)
+    }
+    file_sublist <- fs::path(
+      dir_file_sublist,
+      format(now(), "sublist-%Y%m%d_%H%M%S")
     )
-  )
-  remove_heudiconv_cache(subject, session)
-  system_with_env(tmpl_heudiconv, env)
-}
-
-remove_heudiconv_cache <- function(subject, session) {
-  site <- str_extract(subject, "^[A-Z]+")
-  sid <- str_extract(subject, "(?<=SUB)\\d{3}")
-  suffix <- match_scanner_suffix(site, sid)
-  if (length(suffix) == 0) {
-    return(invisible())
   }
-  heudiconv_cache <- fs::path(
-    path_raw,
-    ".heudiconv",
-    str_glue("{site}{sid}{suffix}"),
-    str_glue("ses-{session}"),
-    "info"
-  )
-  if (fs::dir_exists(heudiconv_cache)) {
-    fs::dir_delete(heudiconv_cache)
-  }
+  sublist |>
+    select(subject, session) |>
+    write_delim(file_sublist, col_names = FALSE)
+  script_qsub <- tempfile()
+  script_content <- fs::path(path_template, "mriqc.tmpl.qsub") |>
+    read_file() |>
+    str_glue()
+  write_lines(script_content, script_qsub)
+  message(str_glue("Commiting job array of { num_jobs } jobs."))
+  message(str_glue("See file {file_sublist} for full list of subjects."))
+  system(str_glue("qsub { script_qsub }"))
 }

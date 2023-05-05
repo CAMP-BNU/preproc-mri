@@ -23,7 +23,7 @@ list_jobs_done_mriqc <- function(check_file_sum = FALSE) {
 commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
   rlang::check_dots_empty()
   if (is.null(file_sublist)) {
-    dir_file_sublist <- fs::path(path_tmp, "mriqc", "qsub")
+    dir_file_sublist <- fs::path(path_tmp, "qsub", "mriqc")
     if (!fs::dir_exists(dir_file_sublist)) {
       fs::dir_create(dir_file_sublist)
     }
