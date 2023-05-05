@@ -33,6 +33,7 @@ argv <- arg_parser("Submitting jobs to convert dicom to bids format") |>
 site <- argv$site
 sid <- argv$sid
 session <- argv$session
+max_jobs <- argv$max_jobs
 if (is.na(argv$site)) {
   sid <- NA_character_
   session <- NA_character_
@@ -66,22 +67,12 @@ if (!is.na(site)) {
     }
   }
 }
-if (argv$max_jobs != 0 && nrow(todo) > argv$max_jobs) {
-  message(
-    str_glue(
-      "The required jobs number ({nrow(todo)})",
-      "exceeded maximal allowed.",
-      "Only the first {argv$max_jobs} commited.",
-      .sep = " "
-    )
-  )
-  todo <- slice_head(todo, n = argv$max_jobs)
-}
-if (nrow(todo) > 0) {
+num_jobs <- nrow(todo)
+if (num_jobs > 0) {
   if (argv$dry_run) {
     message(
       str_glue(
-        "There are {nrow(todo)} jobs to be commited.",
+        "There are {num_jobs} jobs to be commited.",
         "As follows:",
         .sep = " "
       )
@@ -89,7 +80,7 @@ if (nrow(todo) > 0) {
     options(pillar.print_max = Inf)
     print(todo)
   } else {
-    purrr::pwalk(todo, commit_heudiconv)
+    commit_heudiconv(todo)
   }
 } else {
   message("All jobs are done! No jobs were commited.")
