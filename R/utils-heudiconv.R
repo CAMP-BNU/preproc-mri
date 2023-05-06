@@ -23,7 +23,7 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
       sid = str_extract(subject, "\\d{3}"),
       dir_ses = map(
         folder,
-        ~ fs::dir_ls(., regexp = "sub")
+        ~ fs::dir_ls(., regexp = "ses")
       )
     ) |>
     unchop(dir_ses) |>
