@@ -13,12 +13,12 @@ list_jobs_whole_heudiconv <- function() {
 list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
   tibble(
     folder = fs::dir_ls(
-      path_raw,
-      regexp = "sub", type = "directory"
+      fs::path(path_raw, ".heudiconv"),
+      type = "directory"
     )
   ) |>
     mutate(
-      subject = str_extract(fs::path_file(folder), "(?<=sub-).+"),
+      subject = fs::path_file(folder),
       site = str_extract(subject, "^[A-Z]+"),
       sid = str_extract(subject, "\\d{3}"),
       dir_ses = map(
@@ -30,19 +30,41 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
     mutate(
       session = str_extract(dir_ses, "\\d{1}$"),
       is_done = map2_lgl(
-        dir_ses, session,
-        ~ is_done_heudiconv(.x, .y, check_file_sum)
+        subject, session,
+        ~ is_done_heudiconv(
+          subject = .x,
+          session = .y,
+          check_file_sum = check_file_sum
+        )
       )
     ) |>
     filter(is_done) |>
     select(subject, site, sid, session)
 }
 
-is_done_heudiconv <- function(path, session, check_file_sum = FALSE) {
+is_done_heudiconv <- function(path = NULL, subject = NULL, session = NULL,
+                              check_file_sum = FALSE) {
+  rlang::check_exclusive(path, subject, .require = TRUE)
+  rlang::check_exclusive(path, session, .require = TRUE)
   file_sum_min <- list(
     "1" = c(1, 4, 4, 14, 18),
     "2" = c(1, 2, 12, 21)
   )
+  if (!is.null(path)) {
+    session <- str_extract(path, "(?<=ses-)\\d{1}")
+  } else {
+    path <- fs::path(
+      path_raw, str_glue("sub-{subject}"), str_glue("ses-{session}")
+    )
+  }
+  # session number of 3 or more will not be checked
+  if (session > 2) {
+    return(TRUE)
+  }
+  # return `FALSE` early if data path not found
+  if (!fs::dir_exists(path)) {
+    return(FALSE)
+  }
   if (!check_file_sum) {
     return(TRUE)
   }
