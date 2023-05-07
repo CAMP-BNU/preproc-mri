@@ -2,7 +2,7 @@
 options(tidyverse.quiet = TRUE)
 library(argparser)
 library(tidyverse)
-project_root <- box::file()
+project_root <- fs::path_dir(box::file())
 walk(fs::dir_ls(fs::path(project_root, "R")), source)
 argv <- arg_parser("Submitting jobs to convert dicom to bids format") |>
   add_argument("--site", "The site of data to convert", short = "-t") |>
