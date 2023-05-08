@@ -31,53 +31,16 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
       session = str_extract(dir_ses, "\\d{1}$"),
       is_done = map2_lgl(
         subject, session,
-        ~ is_done_heudiconv(
+        ~ validate_data_file_sum(
+          "heudiconv",
           subject = .x,
           session = .y,
-          check_file_sum = check_file_sum
+          check = check_file_sum
         )
       )
     ) |>
     filter(is_done) |>
     select(subject, site, sid, session)
-}
-
-is_done_heudiconv <- function(path = NULL, subject = NULL, session = NULL,
-                              check_file_sum = FALSE) {
-  rlang::check_exclusive(path, subject, .require = TRUE)
-  rlang::check_exclusive(path, session, .require = TRUE)
-  file_sum_min <- list(
-    "1" = c(1, 4, 4, 14, 18),
-    "2" = c(1, 2, 12, 21)
-  )
-  if (!is.null(path)) {
-    session <- str_extract(path, "(?<=ses-)\\d{1}")
-  } else {
-    path <- fs::path(
-      path_raw, str_glue("sub-{subject}"), str_glue("ses-{session}")
-    )
-  }
-  # session number of 3 or more will not be checked
-  if (session > 2) {
-    return(TRUE)
-  }
-  # return `FALSE` early if data path not found
-  if (!fs::dir_exists(path)) {
-    return(FALSE)
-  }
-  if (!check_file_sum) {
-    return(TRUE)
-  }
-  file_sum <- fs::dir_ls(
-    path,
-    recurse = TRUE,
-    type = "file"
-  ) |>
-    fs::path_dir() |>
-    table()
-  file_sum_target <- file_sum_min[[session]]
-  length(file_sum) == length(file_sum_target) &&
-    all(file_sum == file_sum_target)
 }
 
 commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
