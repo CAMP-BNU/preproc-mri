@@ -10,6 +10,8 @@
 #'   this if that can be inferred from `path`. Can be [integer()] or
 #'   [character()].
 #' @param check A logical value indicating if count of files should be checked.
+#' @returns A logical value indicating whether file sum check is passed. `TRUE`
+#'   means passing.
 validate_data_file_sum <- function(type,
                                    path = NULL, subject = NULL,
                                    session = NULL,
