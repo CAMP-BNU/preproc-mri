@@ -10,6 +10,7 @@ site <- argv$site
 sid <- argv$sid
 session <- argv$session
 max_jobs <- argv$max_jobs
+queue <- argv$queue
 if (!is.na(subject)) {
   site <- NA_character_
   sid <- NA_character_

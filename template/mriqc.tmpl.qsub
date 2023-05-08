@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #$ -N mriqc
 #$ -o { project_root }/logs
-#$ -q long.q
+#$ -q { queue }
 #$ -j y
 #$ -t 1:{ num_jobs }
 #$ -tc { max_jobs }

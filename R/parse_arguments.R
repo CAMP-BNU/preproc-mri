@@ -32,6 +32,11 @@ parse_arguments <- function(type) {
       short = "-n"
     ) |>
     add_argument(
+      "--queue",
+      "Specify which queue to run.",
+      default = "long.q"
+    ) |>
+    add_argument(
       "--dry-run",
       "Skip really executing the jobs?",
       flag = TRUE
