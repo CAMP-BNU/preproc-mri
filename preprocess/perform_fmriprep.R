@@ -4,43 +4,7 @@ library(argparser)
 library(tidyverse)
 project_root <- fs::path_dir(box::file())
 walk(fs::dir_ls(fs::path(project_root, "R")), source)
-argv <- arg_parser("Submitting jobs to do mriqc for bids data") |>
-  add_argument(
-    "--subject",
-    paste("The subject identifier in bids.",
-          "If specified, `site` and `sid` will be ignored."),
-    short = "-s"
-  ) |>
-  add_argument("--site", "The site of data", short = "-t") |>
-  add_argument("--sid", "The subject id", short = "-i") |>
-  add_argument(
-    "--skip-session-check",
-    "Do not check if data exist for both sessions? [default: FALSE]",
-    short = "-p",
-    flag = TRUE
-  ) |>
-  add_argument(
-    "--max-jobs",
-    "The maximal running jobs.",
-    default = 10,
-    short = "-n"
-  ) |>
-  add_argument(
-    "--force",
-    "Force run mriqc even if done? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  add_argument(
-    "--rerun-invalidate",
-    "Try to re-run all invalidated subjects? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  add_argument(
-    "--dry-run",
-    "Skip really executing the jobs? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  parse_args()
+argv <- parse_arguments("fmriprep")
 subject <- argv$subject
 site <- argv$site
 sid <- argv$sid

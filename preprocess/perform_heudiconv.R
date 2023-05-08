@@ -4,32 +4,7 @@ library(argparser)
 library(tidyverse)
 project_root <- fs::path_dir(box::file())
 walk(fs::dir_ls(fs::path(project_root, "R")), source)
-argv <- arg_parser("Submitting jobs to convert dicom to bids format") |>
-  add_argument("--site", "The site of data to convert", short = "-t") |>
-  add_argument("--sid", "The subject id", short = "-i") |>
-  add_argument("--session", "The session number", short = "-e") |>
-  add_argument(
-    "--max-jobs",
-    "The maximal jobs to submit. Set to 0 for unlimited jobs.",
-    default = 5,
-    short = "-n"
-  ) |>
-  add_argument(
-    "--force",
-    "Force run conversion? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  add_argument(
-    "--rerun-invalidate",
-    "Try to re-run all invalidated subjects? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  add_argument(
-    "--dry-run",
-    "Skip really executing the jobs? [default: FALSE]",
-    flag = TRUE
-  ) |>
-  parse_args()
+argv <- parse_arguments("heudiconv")
 site <- argv$site
 sid <- argv$sid
 session <- argv$session
