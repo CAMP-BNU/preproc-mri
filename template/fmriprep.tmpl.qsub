@@ -16,6 +16,7 @@ for dir_pattern in "${{prev_dir_pattern[@]}}"
 do
     dir=`realpath { path_derivatives }/fmriprep/$dir_pattern/sub-${{SUBJECT}}`
     if [ -d $dir ]; then
+        echo [`date "+%Y-%m-%d %H:%M:%S"`] "Remove fmriprep files in ${{dir}} from previous run for subject: ${{SUBJECT}}."
         rm -rf $dir
     fi
 done
