@@ -64,6 +64,6 @@ commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
     str_glue()
   write_lines(script_content, script_qsub)
   message(str_glue("Commiting job array of { num_jobs } jobs."))
-  message(str_glue("See file {file_sublist} for full list of subjects."))
+  message(str_glue("See file { file_sublist } for full list of subjects."))
   system(str_glue("qsub { script_qsub }"))
 }

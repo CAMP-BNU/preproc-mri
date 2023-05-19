@@ -5,72 +5,13 @@ library(tidyverse)
 project_root <- fs::path_dir(box::file())
 walk(fs::dir_ls(fs::path(project_root, "R")), source)
 argv <- parse_arguments("mriqc")
-subject <- argv$subject
-site <- argv$site
-sid <- argv$sid
-session <- argv$session
-max_jobs <- argv$max_jobs
-queue <- argv$queue
-if (!is.na(subject)) {
-  site <- NA_character_
-  sid <- NA_character_
-} else {
-  if (is.na(argv$site)) {
-    sid <- NA_character_
-    session <- NA_character_
-  } else if (is.na(sid)) {
-    session <- NA_character_
-  }
-}
 todo <- list_jobs_whole_mriqc()
 done <- list_jobs_done_mriqc(argv$rerun_invalidate)
 if (!isTRUE(argv$force)) {
-  todo <- todo |>
-    anti_join(
-      done,
-      by = c("subject", "session")
-    )
+  todo <- anti_join(
+    todo, done,
+    by = c("subject", "session")
+  )
 }
-if (!is.na(subject)) {
-  if (!subject %in% todo$subject) {
-    stop("No unchecked data from given subject")
-  }
-  todo <- filter(todo, subject == .env$subject)
-} else {
-  if (!is.na(site)) {
-    if (!site %in% todo$site) {
-      stop("No unchecked data from given site")
-    }
-    todo <- filter(todo, site == .env$site)
-    if (!is.na(sid)) {
-      if (!sid %in% todo$sid) {
-        stop("No unchecked data from given site and sid")
-      }
-      todo <- filter(todo, sid == .env$sid)
-    }
-  }
-}
-if (!is.na(session)) {
-  if (!session %in% todo$session) {
-    stop("No unchecked data from given subject and session")
-  }
-  todo <- filter(todo, session == .env$session)
-}
-num_jobs <- nrow(todo)
-if (num_jobs > 0) {
-  if (argv$dry_run) {
-    message(
-      str_glue(
-        "There are {num_jobs} jobs to be commited.",
-        "As follows:",
-        .sep = " "
-      )
-    )
-    options(pillar.print_max = Inf)
-    print(todo)
-  } else {
-    commit_mriqc(todo)
-  }
-} else {
-  message("All jobs are done! No jobs were commited.")
-}
+todo <- filter_subjects(todo, argv)
+execute_jobs(todo, "mriqc", argv)
