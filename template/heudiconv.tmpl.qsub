@@ -11,7 +11,7 @@ read SUBJECT SESSION <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1, $2}}' { fi
 export SUBJECT SESSION
 
 # clean cache if exists
-SUBLABEL=`{ path_template }/format_subject.py ${{SUBJECT}}`
+SUBLABEL=`{ path_template }/heudiconv/format_subject.py ${{SUBJECT}}`
 cache_dir={ path_raw }/.heudiconv/${{SUBLABEL}}/ses-${{SESSION}}
 if [ -d ${{cache_dir}} ]; then
     echo [`date "+%Y-%m-%d %H:%M:%S"`] "Remove heudiconv caches in ${{dir}} from previous run for subject: ${{SUBJECT}}."
