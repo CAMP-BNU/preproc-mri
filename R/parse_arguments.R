@@ -54,14 +54,5 @@ parse_arguments <- function(type) {
         short = "-s"
       )
   }
-  if (type %in% c("fmriprep")) {
-    parser <- parser |>
-      add_argument(
-        "--skip-session-check",
-        "Do not check if data exist for both sessions? [default: FALSE]",
-        short = "-p",
-        flag = TRUE
-      )
-  }
   parse_args(parser)
 }

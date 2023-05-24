@@ -1,15 +1,11 @@
-list_jobs_whole_fmriprep <- function(..., skip_session_check = FALSE) {
-  subjects <- list_jobs_done_heudiconv(...)
-  if (!skip_session_check) {
-    subjects <- subjects |>
-      filter(n() >= 2, .by = subject)
-  }
-  distinct(subjects, subject, site, sid)
+list_jobs_whole_fmriprep <- function(...) {
+  list_jobs_status_heudiconv(...) |>
+    filter(n() >= 2, .by = subject) |>
+    distinct(subject, site, sid)
 }
 
-list_jobs_done_fmriprep <- function(check_file_sum = FALSE,
-                                    skip_session_check = FALSE) {
-  done <- tibble(
+list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
+  tibble(
     folder = fs::path(path_derivatives, "fmriprep") |>
       fs::dir_ls(type = "directory", regexp = "sub")
   ) |>
@@ -24,7 +20,7 @@ list_jobs_done_fmriprep <- function(check_file_sum = FALSE,
     ) |>
     unchop(dir_ses) |>
     mutate(
-      is_done = map_lgl(
+      status = map_chr(
         dir_ses,
         ~ validate_data_file_sum(
           "fmriprep",
@@ -33,12 +29,16 @@ list_jobs_done_fmriprep <- function(check_file_sum = FALSE,
         )
       )
     ) |>
-    filter(is_done)
-  if (!skip_session_check) {
-    done <- done |>
-      filter(n() >= 2, .by = subject)
-  }
-  distinct(done, subject, site, sid)
+    summarise(
+      status = if (all(status == "done")) {
+        "done"
+      } else if (!any(status == "todo")) {
+        "incomplete"
+      } else {
+        "todo"
+      },
+      .by = c(subject, site, sid)
+    )
 }
 
 commit_fmriprep <- function(sublist, file_sublist = NULL, ...) {

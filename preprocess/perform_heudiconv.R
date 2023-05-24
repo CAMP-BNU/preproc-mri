@@ -5,13 +5,12 @@ library(tidyverse)
 project_root <- fs::path_dir(box::file())
 walk(fs::dir_ls(fs::path(project_root, "R")), source)
 argv <- parse_arguments("heudiconv")
-todo <- list_jobs_whole_heudiconv()
-done <- list_jobs_done_heudiconv(argv$rerun_invalidate)
-if (!isTRUE(argv$force)) {
-  todo <- anti_join(
-    todo, done,
-    by = c("site", "sid", "session")
-  )
-}
-todo <- filter_subjects(todo, argv)
-execute_jobs(todo, "heudiconv", argv)
+jobs <- list_jobs_whole_heudiconv() |>
+  left_join(
+    list_jobs_status_heudiconv(argv$rerun_invalidate),
+    by = c("site", "sid", "session"),
+    suffix = c(".orig", ".anon")
+  ) |>
+  mutate(status = coalesce(status, "todo")) |>
+  extract_todo(argv)
+execute_jobs(jobs, "heudiconv", argv)

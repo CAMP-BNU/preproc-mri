@@ -1,6 +1,6 @@
-list_jobs_whole_mriqc <- list_jobs_done_heudiconv
+list_jobs_whole_mriqc <- list_jobs_status_fmriprep
 
-list_jobs_done_mriqc <- function(check_file_sum = FALSE) {
+list_jobs_status_mriqc <- function(check_file_sum = FALSE) {
   # 8 files are generated for each session
   num_files_ses <- 8L
   col_names_chk <- c("subject", "session")
@@ -11,12 +11,23 @@ list_jobs_done_mriqc <- function(check_file_sum = FALSE) {
     count(pick(all_of(col_names_chk)))
   if (check_file_sum) {
     files_mriqc |>
-      filter(n == num_files_ses) |>
-      select(all_of(col_names_chk))
+      mutate(
+        status = case_when(
+          n == num_files_ses ~ "done",
+          n == 0 ~ "todo",
+          .default = "incomplete"
+        )
+      ) |>
+      select(all_of(col_names_chk), status)
   } else {
     files_mriqc |>
-      filter(n >= 1L) |>
-      select(all_of(col_names_chk))
+      mutate(
+        status = if_else(
+          n >= 1,
+          "done", "todo"
+        )
+      ) |>
+      select(all_of(col_names_chk), status)
   }
 }
 

@@ -10,7 +10,7 @@ list_jobs_whole_heudiconv <- function() {
   )
 }
 
-list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
+list_jobs_status_heudiconv <- function(check_file_sum = FALSE) {
   tibble(
     folder = fs::dir_ls(
       fs::path(path_raw, ".heudiconv"),
@@ -26,10 +26,11 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
         ~ fs::dir_ls(., regexp = "ses")
       )
     ) |>
+    filter(!(site == "TJNU" & !str_ends(subject, "N|O"))) |>
     unchop(dir_ses) |>
     mutate(
       session = str_extract(dir_ses, "\\d{1}$"),
-      is_done = map2_lgl(
+      status = map2_chr(
         subject, session,
         ~ validate_data_file_sum(
           "heudiconv",
@@ -39,8 +40,7 @@ list_jobs_done_heudiconv <- function(check_file_sum = FALSE) {
         )
       )
     ) |>
-    filter(is_done) |>
-    select(subject, site, sid, session)
+    select(subject, site, sid, session, status)
 }
 
 commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {

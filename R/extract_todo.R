@@ -1,19 +1,22 @@
-#' Filter subjects from jobs based on parsed command line arguments
+#' Extract todo jobs based on parsed command line arguments
 #'
 #' @param jobs A `data.frame()` of the required jobs.
 #' @param argv Parsed command line arguments.
-#' @returns The filtered out jobs.
-filter_subjects <- function(jobs, argv) {
+#' @returns The extracted jobs to be done.
+extract_todo <- function(jobs, argv) {
   filter_field <- function(jobs, field) {
     if (hasName(argv, field)) {
       if (!hasName(jobs, field)) {
         stop(str_glue("`{field}` is not supported."))
       }
       if (!is.na(argv[[field]])) {
-        if (!argv[[field]] %in% jobs[[field]]) {
-          stop("Given unprocessed data not found. Try adding `-f` if insisted.")
-        }
         jobs <- filter(jobs, .data[[field]] == argv[[field]])
+        if (nrow(jobs) == 0) {
+          stop("Cannot found given data.")
+        }
+        if (all(jobs$status == "done") && !argv$force) {
+          stop("Given data have been finished. Try adding `-f` if insisted.")
+        }
       }
     }
     jobs
@@ -29,9 +32,15 @@ filter_subjects <- function(jobs, argv) {
       argv$session <- NA_character_
     }
   }
-  jobs |>
+  jobs_for_sub <- jobs |>
     filter_field("subject") |>
     filter_field("site") |>
     filter_field("sid") |>
     filter_field("session")
+  bind_rows(
+    filter(jobs_for_sub, status == "todo"),
+    if (argv$rerun_invalidate) {
+      filter(jobs_for_sub, status == "incomplete")
+    }
+  )
 }
