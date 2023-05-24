@@ -55,7 +55,7 @@ recipe_makeups <- tibble(
     recurse = TRUE
   )
 ) |>
-  filter(fs::path_ext(file) != "tsv") |>
+  filter(!str_detect(file, "scans")) |>
   mutate(
     file_new = stringr::str_replace_all(
       file, "ses-3", "ses-1"
