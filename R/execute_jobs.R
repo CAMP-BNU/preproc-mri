@@ -20,10 +20,7 @@ execute_jobs <- function(jobs, type, argv) {
     } else {
       withr::with_environment(
         rlang::env(!!!lst(!!!argv[-1], num_jobs)),
-        rlang::exec(
-          paste0("commit_", type),
-          jobs
-        )
+        rlang::exec(paste0("commit_", type), jobs)
       )
     }
   } else {
