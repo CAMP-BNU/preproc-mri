@@ -56,7 +56,8 @@ commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
     )
   }
   sublist |>
-    select(subject, session) |>
+    # we have two subject labels here, heudiconv used the original one
+    select(subject.orig, session) |>
     write_delim(file_sublist, col_names = FALSE)
   script_qsub <- tempfile()
   script_content <- fs::path(path_template, "heudiconv.tmpl.qsub") |>
