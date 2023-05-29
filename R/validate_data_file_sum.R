@@ -50,11 +50,7 @@ validate_data_file_sum <- function(type,
       return("todo ")
     }
   }
-  file_sum <- fs::dir_ls(
-    path,
-    recurse = TRUE,
-    type = "file"
-  ) |>
+  file_sum <- fs::dir_ls(path, recurse = TRUE, type = "file") |>
     fs::path_dir() |>
     table()
   file_sum_target <- file_sum_min[[part]]
