@@ -3,9 +3,9 @@ list_jobs_whole_heudiconv <- function() {
     fs::dir_ls(type = "directory") |>
     fs::path_file()
   tibble(
-    subject = str_extract(folders, ".+SUB\\d{3}"),
-    site = str_extract(subject, "^[A-Z]+"),
-    sid = str_extract(subject, "\\d{3}$"),
+    sub_dcm = str_extract(folders, ".+SUB\\d{3}"),
+    site = str_extract(sub_dcm, "^[A-Z]+"),
+    sid = str_extract(sub_dcm, "\\d{3}$"),
     session = str_extract(folders, "\\d{1}$")
   )
 }
@@ -29,13 +29,14 @@ list_jobs_status_heudiconv <- function(check_file_sum = FALSE) {
     filter(!(site == "TJNU" & !str_ends(subject, "N|O"))) |>
     unchop(dir_ses) |>
     mutate(
-      session = str_extract(dir_ses, "\\d{1}$"),
+      part = fs::path_file(dir_ses),
+      session = str_extract(part, "\\d{1}$"),
       status = map2_chr(
-        subject, session,
+        subject, part,
         ~ validate_data_file_sum(
           "heudiconv",
           subject = .x,
-          session = .y,
+          part = .y,
           check = check_file_sum
         )
       )
@@ -57,7 +58,7 @@ commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
   }
   sublist |>
     # we have two subject labels here, heudiconv used the original one
-    select(subject.orig, session) |>
+    select(sub_dcm, session) |>
     write_delim(file_sublist, col_names = FALSE)
   script_qsub <- tempfile()
   script_content <- fs::path(path_template, "heudiconv.tmpl.qsub") |>

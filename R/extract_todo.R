@@ -1,9 +1,8 @@
 #' Extract todo jobs based on parsed command line arguments
 #'
 #' @param jobs A `data.frame()` of the required jobs.
-#' @param argv Parsed command line arguments.
 #' @returns The extracted jobs to be done.
-extract_todo <- function(jobs, argv) {
+extract_todo <- function(jobs) {
   filter_field <- function(jobs, field) {
     if (hasName(argv, field)) {
       if (!hasName(jobs, field)) {

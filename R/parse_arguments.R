@@ -1,16 +1,14 @@
 #' Parse command line arguments for scripts
 #'
-#' @param type The type of data processing. Currently supported are
-#'   `"heudiconv"`, `"mriqc"` and `"fmriprep"`.
 #' @returns A list with argument values. The same as those from
 #'   [argparser::parse_args()].
-parse_arguments <- function(type) {
+parse_arguments <- function() {
   name <- switch(
-    type,
+    context,
     heudiconv = "Submitting jobs to convert dicom to bids format",
     mriqc = "Submitting jobs to do mriqc for bids data",
     fmriprep = "Submitting jobs to do fmriprep for bids data",
-    stop("Unsupported routine type.")
+    stop("Unsupported routine context.")
   )
   parser <- arg_parser(name) |>
     add_argument("--site", "The site", short = "-t") |>
@@ -41,11 +39,11 @@ parse_arguments <- function(type) {
       "Skip really executing the jobs?",
       flag = TRUE
     )
-  if (type %in% c("heudiconv", "mriqc")) {
+  if (context %in% c("heudiconv", "mriqc")) {
     parser <- parser |>
       add_argument("--session", "The session number", short = "-e")
   }
-  if (type %in% c("mriqc", "fmriprep")) {
+  if (context %in% c("mriqc", "fmriprep")) {
     parser <- parser |>
       add_argument(
         "--subject",
@@ -54,5 +52,21 @@ parse_arguments <- function(type) {
         short = "-s"
       )
   }
-  parse_args(parser)
+  if (context %in% c("fmriprep")) {
+    parser <- parser |>
+      add_argument(
+        "--skip-session-check",
+        "Do not check if data exist for both sessions? [default: FALSE]",
+        short = "-p",
+        flag = TRUE
+      )
+  }
+  argv <- parse_args(parser)
+  if (context == "fmriprep") {
+    if (argv$skip_session_check && argv$rerun_invalidate) {
+      warning("Enabling --skip-session-check will disable --rerun-invalidate")
+      argv$rerun_invalidate <- FALSE
+    }
+  }
+  argv
 }

@@ -1,10 +1,8 @@
-#' Execute jobs according the type and command line arguments
+#' Execute given jobs
 #'
 #' @param jobs A data frame of jobs to be executed.
-#' @param type A character string of the type of jobs to be executed.
-#' @param argv A list of command line arguments.
 #' @return Invisible `NULL`. The function is used for its side effects.
-execute_jobs <- function(jobs, type, argv) {
+execute_jobs <- function(jobs) {
   num_jobs <- nrow(jobs)
   if (num_jobs > 0) {
     if (argv$dry_run) {
@@ -20,7 +18,7 @@ execute_jobs <- function(jobs, type, argv) {
     } else {
       withr::with_environment(
         rlang::env(!!!lst(!!!argv[-1], num_jobs)),
-        rlang::exec(paste0("commit_", type), jobs)
+        rlang::exec(paste0("commit_", context), jobs)
       )
     }
   } else {

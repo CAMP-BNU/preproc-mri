@@ -1,7 +1,9 @@
-list_jobs_whole_fmriprep <- function(...) {
-  list_jobs_status_heudiconv(...) |>
-    filter(n() >= 2, .by = subject) |>
-    distinct(subject, site, sid)
+list_jobs_whole_fmriprep <- function(skip_session_check = FALSE) {
+  jobs <- list_jobs_status_heudiconv()
+  if (!skip_session_check) {
+    jobs <- filter(jobs, n() >= 2, .by = subject)
+  }
+  distinct(jobs, subject, site, sid)
 }
 
 list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
@@ -13,12 +15,10 @@ list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
       subject = str_extract(folder, "(?<=sub-).*"),
       site = str_extract(subject, "^[A-Z]+"),
       sid = str_extract(subject, "\\d{3}"),
-      dir_ses = map(
-        folder,
-        ~ fs::dir_ls(., regexp = "ses")
-      )
+      dir_ses = map(folder, fs::dir_ls)
     ) |>
     unchop(dir_ses) |>
+    filter(!str_detect(dir_ses, "log")) |> # do not check log files
     mutate(
       status = map_chr(
         dir_ses,
@@ -32,10 +32,10 @@ list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
     summarise(
       status = if (all(status == "done")) {
         "done"
-      } else if (!any(status == "todo")) {
-        "incomplete"
-      } else {
+      } else if (all(status == "todo")) {
         "todo"
+      } else {
+        "incomplete"
       },
       .by = c(subject, site, sid)
     )
