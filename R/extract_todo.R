@@ -41,6 +41,9 @@ extract_todo <- function(jobs, argv) {
     filter(jobs_for_sub, status == "todo"),
     if (argv$rerun_invalidate) {
       filter(jobs_for_sub, status == "incomplete")
+    },
+    if (argv$force) {
+      filter(jobs_for_sub, status == "done")
     }
   )
 }
