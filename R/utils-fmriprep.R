@@ -18,7 +18,7 @@ list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
       dir_ses = map(folder, fs::dir_ls)
     ) |>
     unchop(dir_ses) |>
-    filter(!str_detect(dir_ses, "log")) |> # do not check log files
+    filter(!str_detect(dir_ses, "(log|figures)")) |> # do not check log files
     mutate(
       status = map_chr(
         dir_ses,
