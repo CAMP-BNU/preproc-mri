@@ -59,6 +59,11 @@ parse_arguments <- function() {
         "Do not check if data exist for both sessions? [default: FALSE]",
         short = "-p",
         flag = TRUE
+      ) |>
+      add_argument(
+        "--clean-fs-files",
+        "Clean existing freesurfer recon-all results? [default: FALSE]",
+        flag = TRUE
       )
   }
   argv <- parse_args(parser)

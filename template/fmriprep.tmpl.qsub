@@ -10,16 +10,18 @@ export PROJECT_ROOT={ project_root }
 read SUBJECT <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1}}' { file_sublist })
 export SUBJECT
 
-# clean data from previous runs, because freesurfer might error otherwise
-prev_dir_pattern=( "sourcedata/freesurfer" "" )
-for dir_pattern in "${{prev_dir_pattern[@]}}"
-do
-    dir=`realpath { path_derivatives }/fmriprep/$dir_pattern/sub-${{SUBJECT}}`
-    if [ -d $dir ]; then
-        echo [`date "+%Y-%m-%d %H:%M:%S"`] "Remove fmriprep files in ${{dir}} from previous run for subject: ${{SUBJECT}}."
-        rm -rf $dir
-    fi
-done
+# clean fs files if requested
+if [ { clean_fs_files } = TRUE ]; then
+    prev_dir_pattern=( "sourcedata/freesurfer" "" )
+    for dir_pattern in "${{prev_dir_pattern[@]}}"
+    do
+        dir=`realpath { path_derivatives }/fmriprep/$dir_pattern/sub-${{SUBJECT}}`
+        if [ -d $dir ]; then
+            echo [`date "+%Y-%m-%d %H:%M:%S"`] "Remove fmriprep files in ${{dir}} from previous run for subject: ${{SUBJECT}}."
+            rm -rf $dir
+        fi
+    done
+fi
 
 # do fmriprep
 echo [`date "+%Y-%m-%d %H:%M:%S"`] "Begin fmriprep for subject: ${{SUBJECT}}."
