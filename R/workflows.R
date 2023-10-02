@@ -100,8 +100,3 @@ execute_jobs <- function(jobs) {
   }
   invisible()
 }
-
-perform_workflow <- function() {
-  argv <- parse_arguments()
-  prepare_jobs() |> extract_todo() |> execute_jobs()
-}

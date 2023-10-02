@@ -3,4 +3,5 @@ project_root <- fs::path_dir(box::file())
 options(tidyverse.quiet = TRUE)
 devtools::load_all(project_root)
 context <- "fmriprep"
-perform_workflow()
+argv <- parse_arguments()
+prepare_jobs() |> extract_todo() |> execute_jobs()
