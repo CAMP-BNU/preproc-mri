@@ -1,0 +1,16 @@
+Package: preproc.mri
+Title: A project for MRI data pre-processing
+Version: 0.0.0.9000
+Authors@R: 
+    person("Liang", "Zhang", , "psychelzh@outlook.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9041-1150"))
+Description: MRI data pre-processing for CAMP, not a real package.
+License: MIT + file LICENSE
+Depends: 
+    tidyverse
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    argparser,
+    devtools

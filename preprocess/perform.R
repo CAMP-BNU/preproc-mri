@@ -1,6 +1,0 @@
-options(tidyverse.quiet = TRUE)
-library(argparser)
-library(tidyverse)
-walk(fs::dir_ls(fs::path(project_root, "R")), source)
-argv <- parse_arguments()
-prepare_jobs() |> execute_jobs()

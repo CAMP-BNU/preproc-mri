@@ -1,4 +1,6 @@
 #!/usr/bin/env Rscript
 project_root <- fs::path_dir(box::file())
+options(tidyverse.quiet = TRUE)
+devtools::load_all(project_root)
 context <- "fmriprep"
-source(fs::path(project_root, "preprocess", "perform.R"))
+perform_workflow()
