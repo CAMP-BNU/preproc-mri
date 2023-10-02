@@ -102,8 +102,8 @@ validate_data_file_sum <- function(type,
     fmriprep = list(
       "anat" = 2,
       "figures" = 116,
-      "ses-1" = c(37, 12, 120),
-      "ses-2" = c(12, 140)
+      "ses-1" = c(48, 12, 252),
+      "ses-2" = c(12, 294)
     ),
     stop("Unsupported data type")
   )
