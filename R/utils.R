@@ -64,6 +64,15 @@ parse_arguments <- function() {
         "--clean-fs-files",
         "Clean existing freesurfer recon-all results? [default: FALSE]",
         flag = TRUE
+      ) |>
+      add_argument(
+        "--nthreads",
+        "Number of threads in processing. [default: NA]",
+        short = "-u"
+      ) |>
+      add_argument(
+        "--omp-nthreads",
+        "Maximum number of threads per-process. [default: NA]"
       )
   }
   argv <- parse_args(parser)

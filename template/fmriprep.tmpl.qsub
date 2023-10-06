@@ -7,6 +7,12 @@
 #$ -tc { max_jobs }
 
 export PROJECT_ROOT={ project_root }
+if [ { nthreads } != NA ]; then
+    export NTHREADS={ nthreads }
+fi
+if [ { omp_nthreads } != NA ]; then
+    export OMPTHREADS={ omp_nthreads }
+fi
 read SUBJECT <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1}}' { file_sublist })
 export SUBJECT
 
