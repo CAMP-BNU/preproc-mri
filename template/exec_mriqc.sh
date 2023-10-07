@@ -14,7 +14,7 @@ ${MARQC_CMD} \
     --participant_label ${SUBJECT} \
     --session-id ${SESSION} \
     `# instrumental options` \
-    -w ${PROJECT_ROOT}/tmp/mriqc \
+    -w ${PROJECT_ROOT}/tmp \
     --write-graph --verbose-reports --no-sub \
     `# performance related` \
     --nthreads $NTHREADS \

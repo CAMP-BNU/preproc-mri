@@ -7,7 +7,7 @@
 : ${INPUT_DIR:=${PROJECT_ROOT}/rawdata}
 : ${OUTPUT_DIR:=${PROJECT_ROOT}/derivatives/fmriprep}
 : ${BIDS_DATABASE_DIR:=${PROJECT_ROOT}/bids_db}
-: ${WORK_DIR:=${PROJECT_ROOT}/tmp/fmriprep}
+: ${WORK_DIR:=${PROJECT_ROOT}/tmp}
 # output spaces
 : ${OUTPUT_SPACES:=MNI152NLin2009cAsym MNI152NLin6Asym:res-2 anat fsaverage fsaverage6}
 # freesurfer
