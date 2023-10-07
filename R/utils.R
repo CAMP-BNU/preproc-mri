@@ -61,8 +61,8 @@ parse_arguments <- function() {
         flag = TRUE
       ) |>
       add_argument(
-        "--clean-fs-files",
-        "Clean existing freesurfer recon-all results? [default: FALSE]",
+        "--clean-last",
+        "Clean results from last run (including fs files)? [default: FALSE]",
         flag = TRUE
       ) |>
       add_argument(
