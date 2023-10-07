@@ -25,14 +25,15 @@ ${FMRIPREP_CMD} \
     --participant_label ${SUBJECT} \
     --bids-database-dir ${BIDS_DATABASE_DIR} \
     `# performance options` \
-    --nthreads $NTHREADS \
-    --omp-nthreads $OMPTHREADS \
-    --mem_mb $MEMMB \
+    --nthreads ${NTHREADS} \
+    --omp-nthreads ${OMPTHREADS} \
+    --mem_mb ${MEMMB} \
     --output-spaces ${OUTPUT_SPACES} \
     `# other options` \
     -w ${WORK_DIR} \
     --stop-on-first-crash --notrack \
     `# freesurfere options` \
-    --fs-license-file ${FS_LICENSE} --fs-subjects-dir ${FS_SUBJECTS_DIR} \
+    --fs-license-file ${FS_LICENSE} \
+    --fs-subjects-dir ${FS_SUBJECTS_DIR} \
     `# ICA denoise: note this option is deprecated in future versions` \
     --use-aroma
