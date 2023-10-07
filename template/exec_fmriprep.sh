@@ -6,6 +6,7 @@
 # positional parameters
 : ${INPUT_DIR:=${PROJECT_ROOT}/rawdata}
 : ${OUTPUT_DIR:=${PROJECT_ROOT}/derivatives/fmriprep}
+: ${BIDS_DATABASE_DIR:=${PROJECT_ROOT}/bids_db}
 : ${WORK_DIR:=${PROJECT_ROOT}/tmp/fmriprep}
 # output spaces
 : ${OUTPUT_SPACES:=MNI152NLin2009cAsym MNI152NLin6Asym:res-2 anat fsaverage fsaverage6}
@@ -22,6 +23,7 @@ ${FMRIPREP_CMD} \
     `# filtering bids queries` \
     --skip_bids_validation \
     --participant_label ${SUBJECT} \
+    --bids-database-dir ${BIDS_DATABASE_DIR} \
     `# performance options` \
     --nthreads $NTHREADS \
     --omp-nthreads $OMPTHREADS \
