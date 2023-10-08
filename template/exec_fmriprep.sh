@@ -16,7 +16,7 @@
 # performance related
 : ${NTHREADS:=8}
 : ${OMPTHREADS:=4}
-: ${MEMMB:=61400} # 60GiB
+: ${MEMMB:=12288} # 12GiB
 
 export SINGULARITYENV_TEMPLATEFLOW_HOME=/home/zhangliang/.cache/templateflow/
 
