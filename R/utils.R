@@ -62,21 +62,27 @@ parse_arguments <- function() {
       ) |>
       add_argument(
         "--clean-last",
-        "Clean results from last run (including fs files)? [default: FALSE]",
-        flag = TRUE
+        paste(
+          "Clean results from last run?",
+          "Can be 'none', 'results', 'freesurfer' or 'all'."
+        ),
+        default = "none"
       ) |>
       add_argument(
         "--nthreads",
-        "Number of threads in processing. [default: NA]",
+        "Number of threads in processing.",
         short = "-u"
       ) |>
       add_argument(
         "--omp-nthreads",
-        "Maximum number of threads per-process. [default: NA]"
+        "Maximum number of threads per-process."
       ) |>
       add_argument(
         "--pe",
-        "The parallel environment. [default: ompi]",
+        paste(
+          "The parallel environment.",
+          "Used when `--nthreads` is set and larger than 1."
+        ),
         default = "ompi"
       )
   }
