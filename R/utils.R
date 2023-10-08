@@ -73,6 +73,11 @@ parse_arguments <- function() {
       add_argument(
         "--omp-nthreads",
         "Maximum number of threads per-process. [default: NA]"
+      ) |>
+      add_argument(
+        "--pe",
+        "The parallel environment. [default: ompi]",
+        default = "ompi"
       )
   }
   argv <- parse_args(parser)

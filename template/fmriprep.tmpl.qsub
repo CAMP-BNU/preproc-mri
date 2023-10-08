@@ -5,6 +5,7 @@
 #$ -j y
 #$ -t 1:{ num_jobs }
 #$ -tc { max_jobs }
+{ use_pe }
 
 export PROJECT_ROOT={ project_root }
 if [ { nthreads } != NA ]; then

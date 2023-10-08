@@ -55,6 +55,10 @@ commit_fmriprep <- function(sublist, file_sublist = NULL, ...) {
   }
   write_lines(sublist$subject, file_sublist)
   script_qsub <- tempfile()
+  use_pe <- ""
+  if (nthreads > 1) {
+    use_pe <- str_glue("#$ -pe { pe } { nthreads }")
+  }
   script_content <- fs::path(path_template, "fmriprep.tmpl.qsub") |>
     read_file() |>
     str_glue()
