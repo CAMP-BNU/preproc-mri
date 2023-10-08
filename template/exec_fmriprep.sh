@@ -16,7 +16,7 @@
 # performance related
 : ${NTHREADS:=8}
 : ${OMPTHREADS:=4}
-: ${MEMMB:=12288} # 12GiB
+: ${MEMMB:=61400} # 60GiB
 
 ${FMRIPREP_CMD} \
     ${INPUT_DIR} ${OUTPUT_DIR} participant \
