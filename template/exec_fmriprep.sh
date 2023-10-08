@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # prepare command of fmriprep
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
-: ${FMRIPREP_CONTAINER:=/opt/fmritools/containers/fmriprep-23.0.2.sif}
+: ${FMRIPREP_CONTAINER:=/opt/fmritools/containers/fmriprep-v23.1.4.sif}
 : ${FMRIPREP_CMD:=${SINGULARITY_CMD} run -c -e -B /seastor:/seastor -B /home/zhangliang:/home/zhangliang ${FMRIPREP_CONTAINER}}
 # positional parameters
 : ${INPUT_DIR:=${PROJECT_ROOT}/rawdata}
@@ -17,6 +17,8 @@
 : ${NTHREADS:=8}
 : ${OMPTHREADS:=4}
 : ${MEMMB:=61400} # 60GiB
+
+export SINGULARITYENV_TEMPLATEFLOW_HOME=/home/zhangliang/.cache/templateflow/
 
 ${FMRIPREP_CMD} \
     ${INPUT_DIR} ${OUTPUT_DIR} participant \
@@ -34,6 +36,4 @@ ${FMRIPREP_CMD} \
     --stop-on-first-crash --notrack \
     `# freesurfere options` \
     --fs-license-file ${FS_LICENSE} \
-    --fs-subjects-dir ${FS_SUBJECTS_DIR} \
-    `# ICA denoise: note this option is deprecated in future versions` \
-    --use-aroma
+    --fs-subjects-dir ${FS_SUBJECTS_DIR}
