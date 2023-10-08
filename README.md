@@ -4,48 +4,33 @@ This repository contains the code for pre-processing MRI data. The codes are hig
 
 ## Requirements
 
-R and python are required to run the codes. The following R packages are required:
-
-- tidyverse: data manipulation
-- argparser: command line argument parser
-- box: auto-detect script location
-
-As for python, no additional packages are required. But we utilize a lot of containers including heudiconv, mriqc and fmriprep. Please refer to the [BIDS documentation](https://bids.neuroimaging.io/) for more information.
+R and python are required to run the codes. Additionally, we utilize a lot of containers including heudiconv, mriqc and fmriprep. Please refer to the [BIDS documentation](https://bids.neuroimaging.io/) for more information.
 
 ## Usage
 
 Pre-processing is done with the following steps:
 
-1. Convert DICOM files to BIDS format: `./preprocess/perform_heudiconv.R`
-2. Run MRIQC: `./preprocess/perform_mriqc.R`
-3. Run pre-processing for functional data (i.e., fmriprep): `./preprocess/perform_fmriprep.R`
-
-### `perform_heudiconv.R`
-
-This script converts DICOM files to BIDS format. The script is highly customized for the data we have. The script is designed to be run on a cluster. Run `./preprocess/perform_heudiconv.R -h` for more information.
-
-### `perform_mriqc.R`
-
-This script runs MRIQC. The script is highly customized for the data we have. The script is designed to be run on a cluster. Run `./preprocess/perform_mriqc.R -h` for more information.
-
-### `perform_fmriprep.R`
-
-This script runs fmriprep. The script is highly customized for the data we have. The script is designed to be run on a cluster. Run `./preprocess/perform_fmriprep.R -h` for more information.
+1. Convert DICOM files to BIDS format: `./preprocess/perform_heudiconv.R`. Run `./preprocess/perform_heudiconv.R -h` for more information.
+2. Run MRIQC: `./preprocess/perform_mriqc.R`. Run `./preprocess/perform_mriqc.R -h` for more information.
+3. Run pre-processing for functional data (i.e., fmriprep): `./preprocess/perform_fmriprep.R`. Run `./preprocess/perform_fmriprep.R -h` for more information.
 
 ## Notes
 
-The repository organized into the following structure:
+The repository is organized into the following structure:
 
 - Data Folders:
-  - Folder `sourcedata`: contains the DICOM files
-  - Folder `rawdata`: contains the BIDS format data
-  - Folder `derivatives`: contains the pre-processed data
-  - Folder `backup`: contains backup data which are deemed obsolete
-  - Folder `tmp`: contains the temporary files generated during the pre-processing (mostly will be deleted after the pre-processing automatically)
+  - Folder `sourcedata`: contains the DICOM files.
+  - Folder `rawdata`: contains the BIDS format data.
+  - Folder `bids_db`: contains the database of BIDS Layout. This is used to speed up the pre-processing.
+  - Folder `derivatives`: contains the pre-processed data.
+  - Folder `backup`: contains backup data which are deemed obsolete.
+  - Folder `tmp`: contains the temporary files generated during the pre-processing (mostly will be deleted after the pre-processing automatically).
+  - Folder `logs`: contains the log files generated during the pre-processing by the cluster.
 - Code Folders:
-  - Folder `R`: contains the R scripts to do the pre-processing
-  - Folder `preprocess`: contains the end point script to do the pre-processing
-  - Folder `template`: contains the template files (you can find the shell and python templates here) to do the pre-processing
-  - Folder `logs`: contains the log files generated during the pre-processing by the cluster
+  - Folder `R`: contains the R scripts to do the pre-processing.
+  - Folder `preprocess`: contains the end point script to do the pre-processing.
+  - Folder `template`: contains the template files (you can find the shell and python templates here) to do the pre-processing.
 
 ## TODO
+
+ICA-AROMA was removed from fmriprep since 23.1.0, and a custom ICA-AROMA workflow is required.
