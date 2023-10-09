@@ -7,11 +7,23 @@ list_jobs_whole_fmriprep <- function(skip_session_check = FALSE) {
 }
 
 list_jobs_status_fmriprep <- function() {
+  if (!file.exists(file_fmriprep_jobs)) {
+    return(
+      tibble(
+        subject = "",
+        site = "",
+        sid = "",
+        status = "",
+        .rows = 0
+      )
+    )
+  }
   read_tsv(
     file_fmriprep_jobs,
     col_names = c("subject", "job", "status"),
     show_col_types = FALSE
   ) |>
+    slice_tail(n = 1, by = subject) |>
     mutate(
       site = str_extract(subject, "^[A-Z]+"),
       sid = str_extract(subject, "\\d{3}"),
