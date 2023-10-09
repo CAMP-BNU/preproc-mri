@@ -12,7 +12,7 @@
 : ${OUTPUT_SPACES:=MNI152NLin2009cAsym MNI152NLin6Asym:res-2 anat fsaverage fsaverage6}
 # freesurfer
 : ${FS_LICENSE:=/seastor/zhangliang/license.txt}
-: ${FS_SUBJECTS_DIR:=${OUTPUT_DIR}/sourcedata/freesurfer}
+: ${FS_SUBJECTS_DIR:=${PROJECT_ROOT}/derivatives/freesurfer}
 # performance related
 : ${NTHREADS:=8}
 : ${OMPTHREADS:=4}
