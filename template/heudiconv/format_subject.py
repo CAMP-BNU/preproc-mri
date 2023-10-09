@@ -13,7 +13,7 @@ sid = parts[3][3:]
 suffix = None
 if site == "TJNU":
     # scanner info for TJNU
-    scanner_file = os.path.join(os.getenv("PROJECT_ROOT"), "sourcedata", "tjnu-scanner.csv")
+    scanner_file = os.path.join(os.path.dirname(__file__), "tjnu-scanner.csv")
     with open(scanner_file, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
