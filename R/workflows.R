@@ -1,6 +1,6 @@
 #' Prepare jobs to submit to the cluster
 prepare_jobs <- function() {
-  keys <-  switch(context,
+  keys <- switch(context,
     heudiconv = c("site", "sid", "session"),
     fmriprep = c("subject", "site", "sid"),
     mriqc = c("subject", "session"),
@@ -29,32 +29,30 @@ prepare_jobs <- function() {
 #' @returns The extracted jobs to be done.
 extract_todo <- function(jobs) {
   filter_field <- function(jobs, field) {
-    if (hasName(argv, field)) {
-      if (!hasName(jobs, field)) {
-        stop(str_glue("`{field}` is not supported."))
-      }
-      if (!is.na(argv[[field]])) {
-        jobs <- filter(jobs, .data[[field]] == argv[[field]])
-        if (nrow(jobs) == 0) {
-          stop("Cannot found given data.")
-        }
-        if (all(jobs$status == "done") && !argv$force) {
-          stop("Given data have been finished. Try adding `-f` if insisted.")
-        }
-      }
+    if (!hasName(argv, field) || is.na(argv[[field]])) {
+      return(jobs)
+    }
+    if (!hasName(jobs, field)) {
+      stop(str_glue("`{field}` is not supported."))
+    }
+    jobs <- filter(jobs, .data[[field]] == argv[[field]])
+    if (nrow(jobs) == 0) {
+      stop("Cannot found given data.")
+    }
+    if (all(jobs$status == "done") && !argv$force) {
+      stop("Given data have been finished. Try adding `-f` if insisted.")
     }
     jobs
   }
   if (hasName(argv, "subject") && !is.na(argv$subject)) {
-    argv$site <- argv$sid <- NA_character_
-  } else {
-    if (hasName(argv, "site") && is.na(argv$site)) {
-      argv$sid <- NA_character_
-    }
-    if (hasName(argv, "session") &&
-        anyNA(argv[c("site", "sid")])) {
-      argv$session <- NA_character_
-    }
+    argv$site <- NA_character_
+    argv$sid <- NA_character_
+  }
+  if (hasName(argv, "site") && is.na(argv$site)) {
+    argv$sid <- NA_character_
+  }
+  if (hasName(argv, "session") && anyNA(argv[c("site", "sid")])) {
+    argv$session <- NA_character_
   }
   jobs_for_sub <- jobs |>
     filter_field("subject") |>
