@@ -3,8 +3,7 @@
 #' @returns A list with argument values. The same as those from
 #'   [argparser::parse_args()].
 parse_arguments <- function() {
-  name <- switch(
-    context,
+  name <- switch(context,
     heudiconv = "Submitting jobs to convert dicom to bids format",
     mriqc = "Submitting jobs to do mriqc for bids data",
     fmriprep = "Submitting jobs to do fmriprep for bids data",
@@ -47,8 +46,10 @@ parse_arguments <- function() {
     parser <- parser |>
       add_argument(
         "--subject",
-        paste("The subject identifier in bids.",
-              "If specified, `site` and `sid` will be ignored."),
+        paste(
+          "The subject identifier in bids.",
+          "If specified, `site` and `sid` will be ignored."
+        ),
         short = "-s"
       )
   }
@@ -86,14 +87,7 @@ parse_arguments <- function() {
         default = "ompi"
       )
   }
-  argv <- parse_args(parser)
-  if (context == "fmriprep") {
-    if (argv$skip_session_check && argv$rerun_invalidate) {
-      warning("Enabling --skip-session-check will disable --rerun-invalidate")
-      argv$rerun_invalidate <- FALSE
-    }
-  }
-  argv
+  parse_args(parser) |> validate_argv()
 }
 
 #' Validate data based on file counts
@@ -153,7 +147,7 @@ validate_data_file_sum <- function(type,
     table()
   file_sum_target <- file_sum_min[[part]]
   if (length(file_sum) == length(file_sum_target) &&
-    all(file_sum == file_sum_target)) {
+        all(file_sum == file_sum_target)) {
     return("done")
   } else {
     return("incomplete")
@@ -177,4 +171,30 @@ clean_json_embed <- function(file_origin,
     }
     readr::write_file(content_corrected, file_corrected)
   }
+}
+
+# helper functions
+validate_argv <- function(argv) {
+  if (context %in% c("mriqc", "fmriprep")) {
+    if (!is.na(argv$subject) && !all(is.na(argv[c("site", "sid")]))) {
+      warning("Specify --subject will supersede --site and --sid")
+      argv$site <- NA_character_
+      argv$sid <- NA_character_
+    }
+  }
+  if (context == "heudiconv") {
+    if (!is.na(argv$session) && anyNA(argv[c("site", "sid")])) {
+      stop("Cannot specify --session without --site and --sid specified")
+    }
+  }
+  if (context == "fmriprep") {
+    if (argv$skip_session_check && argv$rerun_invalidate) {
+      warning("Enabling --skip-session-check will disable --rerun-invalidate")
+      argv$rerun_invalidate <- FALSE
+    }
+  }
+  if (!is.na(argv$sid) && is.na(argv$site)) {
+    stop("Cannot specify --sid without --site specified")
+  }
+  argv
 }
