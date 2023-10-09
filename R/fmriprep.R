@@ -6,38 +6,16 @@ list_jobs_whole_fmriprep <- function(skip_session_check = FALSE) {
   distinct(jobs, subject, site, sid)
 }
 
-list_jobs_status_fmriprep <- function(check_file_sum = FALSE) {
-  tibble(
-    folder = fs::path(path_derivatives, "fmriprep") |>
-      fs::dir_ls(type = "directory", regexp = "sub")
+list_jobs_status_fmriprep <- function() {
+  read_tsv(
+    path_fmriprep_jobs,
+    col_names = c("subject", "job", "status"),
+    show_col_types = FALSE
   ) |>
     mutate(
-      subject = str_extract(folder, "(?<=sub-).*"),
       site = str_extract(subject, "^[A-Z]+"),
       sid = str_extract(subject, "\\d{3}"),
-      dir_ses = map(folder, fs::dir_ls)
-    ) |>
-    unchop(dir_ses) |>
-    filter(!str_detect(dir_ses, "(log|figures)")) |> # do not check log files
-    mutate(
-      status = map_chr(
-        dir_ses,
-        ~ validate_data_file_sum(
-          "fmriprep",
-          path = .,
-          check = check_file_sum
-        )
-      )
-    ) |>
-    summarise(
-      status = if (all(status == "done")) {
-        "done"
-      } else if (all(status == "todo")) {
-        "todo"
-      } else {
-        "incomplete"
-      },
-      .by = c(subject, site, sid)
+      status = if_else(status == 0, "done", "incomplete")
     )
 }
 

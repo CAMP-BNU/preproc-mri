@@ -12,7 +12,7 @@ prepare_jobs <- function() {
   }
   if (context == "fmriprep") {
     jobs_list <- list_jobs_whole_fmriprep(argv$skip_session_check)
-    jobs_status <- list_jobs_status_fmriprep(argv$rerun_invalidate)
+    jobs_status <- list_jobs_status_fmriprep()
   }
   if (context == "mriqc") {
     jobs_list <- list_jobs_whole_mriqc()
