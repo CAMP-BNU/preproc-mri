@@ -43,7 +43,7 @@ export WORK_DIR={ path_tmp }
 export BIDS_DATABASE_DIR={ path_bids_db }
 { path_template }/exec_fmriprep.sh
 exitcode=$?
-echo -e "$SUBJECT\t${{JOB_ID}}-${{SGE_TASK_ID}}\t$exitcode" >> { path_fmriprep_jobs }
+echo -e "$SUBJECT\t${{JOB_ID}}-${{SGE_TASK_ID}}\t$exitcode" >> { file_fmriprep_jobs }
 echo [`date "+%Y-%m-%d %H:%M:%S"`] "End fmriprep for subject: $SUBJECT with exit code $exitcode."
 
 # clean working files

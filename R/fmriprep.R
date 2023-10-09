@@ -8,7 +8,7 @@ list_jobs_whole_fmriprep <- function(skip_session_check = FALSE) {
 
 list_jobs_status_fmriprep <- function() {
   read_tsv(
-    path_fmriprep_jobs,
+    file_fmriprep_jobs,
     col_names = c("subject", "job", "status"),
     show_col_types = FALSE
   ) |>
