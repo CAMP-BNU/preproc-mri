@@ -9,7 +9,7 @@
 : ${BIDS_DATABASE_DIR:=${PROJECT_ROOT}/bids_db}
 : ${WORK_DIR:=${PROJECT_ROOT}/tmp}
 # output spaces
-: ${OUTPUT_SPACES:=MNI152NLin2009cAsym MNI152NLin6Asym:res-2 anat fsaverage fsaverage6}
+: ${OUTPUT_SPACES:=MNI152NLin2009cAsym MNI152NLin6Asym:res-2 anat fsnative fsaverage fsaverage6}
 # freesurfer
 : ${FS_LICENSE:=/seastor/zhangliang/license.txt}
 : ${FS_SUBJECTS_DIR:=${PROJECT_ROOT}/derivatives/freesurfer}
@@ -30,7 +30,9 @@ ${FMRIPREP_CMD} \
     --nthreads ${NTHREADS} \
     --omp-nthreads ${OMPTHREADS} \
     --mem_mb ${MEMMB} \
+    `# output options` \
     --output-spaces ${OUTPUT_SPACES} \
+    --cifti-output \
     `# other options` \
     -w ${WORK_DIR} \
     --stop-on-first-crash --notrack \
