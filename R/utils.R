@@ -177,25 +177,26 @@ clean_json_embed <- function(file_origin,
 # helper functions
 validate_argv <- function(argv) {
   if (context %in% c("mriqc", "fmriprep")) {
-    if (!all(is.na(argv$subject)) && !all(is.na(argv[c("site", "sid")]))) {
-      warning("Specify --subject will supersede --site and --sid")
-      argv$site <- NA_character_
-      argv$sid <- NA_character_
-    }
+    stopifnot(
+      "Cannot specify --site or --sid when --subject is specified" =
+        all(is.na(argv$subject)) || all(is.na(argv[c("site", "sid")]))
+    )
   }
+  stopifnot(
+    "Cannot specify --sid without --site specified" =
+      all(is.na(argv$sid)) || !is.na(argv$site)
+  )
   if (context == "heudiconv") {
-    if (!is.na(argv$session) && anyNA(argv[c("site", "sid")])) {
-      stop("Cannot specify --session without --site and --sid specified")
-    }
+    stopifnot(
+      "Cannot specify --session without --site and --sid specified" =
+        is.na(argv$session) || !(anyNA(argv[c("site", "sid")]))
+    )
   }
   if (context == "fmriprep") {
     if (argv$skip_session_check && argv$rerun_invalidate) {
       warning("Enabling --skip-session-check will disable --rerun-invalidate")
       argv$rerun_invalidate <- FALSE
     }
-  }
-  if (!all(is.na(argv$sid)) && is.na(argv$site)) {
-    stop("Cannot specify --sid without --site specified")
   }
   argv
 }
