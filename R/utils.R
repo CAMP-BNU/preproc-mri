@@ -11,7 +11,7 @@ parse_arguments <- function() {
   )
   parser <- arg_parser(name) |>
     add_argument("--site", "The site", short = "-t") |>
-    add_argument("--sid", "The subject id", short = "-i") |>
+    add_argument("--sid", "The subject id", short = "-i", nargs = Inf) |>
     add_argument(
       "--force",
       "Force run even if it is done?",
@@ -50,7 +50,8 @@ parse_arguments <- function() {
           "The subject identifier in bids.",
           "If specified, `site` and `sid` will be ignored."
         ),
-        short = "-s"
+        short = "-s",
+        nargs = Inf
       )
   }
   if (context %in% c("fmriprep")) {
@@ -176,7 +177,7 @@ clean_json_embed <- function(file_origin,
 # helper functions
 validate_argv <- function(argv) {
   if (context %in% c("mriqc", "fmriprep")) {
-    if (!is.na(argv$subject) && !all(is.na(argv[c("site", "sid")]))) {
+    if (!all(is.na(argv$subject)) && !all(is.na(argv[c("site", "sid")]))) {
       warning("Specify --subject will supersede --site and --sid")
       argv$site <- NA_character_
       argv$sid <- NA_character_
@@ -193,7 +194,7 @@ validate_argv <- function(argv) {
       argv$rerun_invalidate <- FALSE
     }
   }
-  if (!is.na(argv$sid) && is.na(argv$site)) {
+  if (!all(is.na(argv$sid)) && is.na(argv$site)) {
     stop("Cannot specify --sid without --site specified")
   }
   argv

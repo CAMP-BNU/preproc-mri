@@ -29,10 +29,10 @@ prepare_jobs <- function() {
 #' @returns The extracted jobs to be done.
 extract_todo <- function(jobs) {
   filter_field <- function(jobs, field) {
-    if (!hasName(argv, field) || is.na(argv[[field]])) {
+    if (!hasName(argv, field) || all(is.na(argv[[field]]))) {
       return(jobs)
     }
-    jobs <- filter(jobs, .data[[field]] == argv[[field]])
+    jobs <- filter(jobs, .data[[field]] %in% argv[[field]])
     if (nrow(jobs) == 0) {
       stop("Cannot found given data.")
     }
