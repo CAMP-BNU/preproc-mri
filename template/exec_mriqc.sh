@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
 # set default MRIQC_CONTAINER
-: ${MRIQC_CONTAINER:=/opt/fmritools/containers/mriqc-23.1.0rc0.sif}
+: ${MRIQC_CONTAINER:=/opt/fmritools/containers/mriqc-v23.1.0.sif}
 # note $HOME is used for cached templateflow
 : ${MARQC_CMD:=${SINGULARITY_CMD} run -c -e -B /seastor:/seastor -B /home/zhangliang:/home/zhangliang ${MRIQC_CONTAINER}}
 # positional parameters
