@@ -31,6 +31,15 @@ The repository is organized into the following structure:
   - Folder `preprocess`: contains the end point script to do the pre-processing.
   - Folder `template`: contains the template files (you can find the shell and python templates here) to do the pre-processing.
 
+### fMRIprep
+
+For storage considerations, we specified the outspaces as:
+
+- `MNI152NLin6Asym`: we do not include `MNI152NLin2009cAsym`.
+- `anat`: T1 weighted non-standard space.
+- `fsaverage6`: freesurfer's surface based space.
+- `fsLR`: aka CIFTI output.
+
 ## TODO
 
 ICA-AROMA was removed from fmriprep since 23.1.0, and a custom ICA-AROMA workflow is required.
