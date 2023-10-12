@@ -20,7 +20,7 @@ list_jobs_status_fmriprep <- function() {
   }
   read_tsv(
     file_fmriprep_jobs,
-    col_names = c("subject", "job", "status"),
+    col_names = c("subject", "job", "status", "finish_time"),
     show_col_types = FALSE
   ) |>
     slice_tail(n = 1, by = subject) |>

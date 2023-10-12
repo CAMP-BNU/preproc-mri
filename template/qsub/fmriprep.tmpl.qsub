@@ -20,7 +20,7 @@ export SUBJECT
 clean_last_results () {{
     local path=$1/sub-$SUBJECT
     if [ -d $path ]; then
-        echo [`date "+%Y-%m-%d %H:%M:%S"`] "Remove $2 results in <$path> from previous run for subject: $SUBJECT."
+        echo [`date "+%Y-%m-%d %T"`] "Remove $2 results in <$path> from previous run for subject: $SUBJECT."
         rm -rf $path
     fi
     return 0
@@ -36,12 +36,12 @@ if [ { clean_last } = all ] || [ { clean_last } = freesurfer ]; then
 fi
 
 # do fmriprep
-echo [`date "+%Y-%m-%d %H:%M:%S"`] "Begin fmriprep for subject: $SUBJECT."
+echo [`date "+%Y-%m-%d %T"`] "Begin fmriprep for subject: $SUBJECT."
 export INPUT_DIR={ path_raw }
 export OUTPUT_DIR={ path_derivatives }/fmriprep
 export WORK_DIR={ path_tmp }
 export BIDS_DATABASE_DIR={ path_bids_db }
 { path_template }/exec_fmriprep.sh
 exitcode=$?
-echo -e "$SUBJECT\t${{JOB_ID}}-${{SGE_TASK_ID}}\t$exitcode" >> { file_fmriprep_jobs }
-echo [`date "+%Y-%m-%d %H:%M:%S"`] "End fmriprep for subject: $SUBJECT with exit code $exitcode."
+echo $SUBJECT$'\t'$JOB_ID-$SGE_TASK_ID$'\t'$exitcode$'\t'`date "+%Y-%m-%d %T"` >> { file_fmriprep_jobs }
+echo [`date "+%Y-%m-%d %T"`] "End fmriprep for subject: $SUBJECT with exit code $exitcode."
