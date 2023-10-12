@@ -44,16 +44,33 @@ commit_fmriprep <- function(sublist, file_sublist = NULL, ...) {
     )
   }
   write_lines(sublist$subject, file_sublist)
-  script_qsub <- tempfile()
+  # jobs for main fmriprep
+  main_qsub <- tempfile()
   use_pe <- ""
   if (!is.na(nthreads) && nthreads > 1) {
     use_pe <- str_glue("#$ -pe { pe } { nthreads }")
   }
-  script_content <- fs::path(path_qsub, "fmriprep.tmpl.qsub") |>
+  main_cmd <- fs::path(path_qsub, "fmriprep.tmpl.qsub") |>
     read_file() |>
     str_glue()
-  write_lines(script_content, script_qsub)
-  message(str_glue("Commiting job array of { num_jobs } jobs."))
+  write_lines(main_cmd, main_qsub)
+  message(str_glue("Commiting main job array of { num_jobs } jobs."))
   message(str_glue("See file { file_sublist } for full list of subjects."))
-  system(str_glue("qsub { script_qsub }"))
+  job_main <- system(
+    str_glue("qsub -terse { main_qsub }"),
+    intern = TRUE
+  )
+  message(str_glue("Commiting main fmriprep job array { job_main } succeeded."))
+  # jobs to clean temporary files
+  job_main_id <- str_extract(job_main, "^\\d+")
+  clean_qsub <- tempfile()
+  clean_cmd <- fs::path(path_qsub, "clean_fmriprep.tmpl.qsub") |>
+    read_file() |>
+    str_glue()
+  write_lines(clean_cmd, clean_qsub)
+  job_clean <- system(
+    str_glue("qsub -terse { clean_qsub }"),
+    intern = TRUE
+  )
+  message(str_glue("Commiting clean job array { job_clean } succeeded."))
 }
