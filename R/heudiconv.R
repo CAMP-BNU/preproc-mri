@@ -61,7 +61,7 @@ commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
     select(sub_dcm, session) |>
     write_delim(file_sublist, col_names = FALSE)
   script_qsub <- tempfile()
-  script_content <- fs::path(path_template, "heudiconv.tmpl.qsub") |>
+  script_content <- fs::path(path_qsub, "heudiconv.tmpl.qsub") |>
     read_file() |>
     str_glue()
   write_lines(script_content, script_qsub)

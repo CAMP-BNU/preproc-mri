@@ -49,7 +49,7 @@ commit_fmriprep <- function(sublist, file_sublist = NULL, ...) {
   if (!is.na(nthreads) && nthreads > 1) {
     use_pe <- str_glue("#$ -pe { pe } { nthreads }")
   }
-  script_content <- fs::path(path_template, "fmriprep.tmpl.qsub") |>
+  script_content <- fs::path(path_qsub, "fmriprep.tmpl.qsub") |>
     read_file() |>
     str_glue()
   write_lines(script_content, script_qsub)

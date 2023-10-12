@@ -47,7 +47,7 @@ commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
     select(subject, session) |>
     write_delim(file_sublist, col_names = FALSE)
   script_qsub <- tempfile()
-  script_content <- fs::path(path_template, "mriqc.tmpl.qsub") |>
+  script_content <- fs::path(path_qsub, "mriqc.tmpl.qsub") |>
     read_file() |>
     str_glue()
   write_lines(script_content, script_qsub)

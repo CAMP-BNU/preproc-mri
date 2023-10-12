@@ -8,5 +8,6 @@ path_tmp <- fs::path(project_root, "tmp")
 path_log <- fs::path(project_root, "logs")
 # code folders
 path_template <- fs::path(project_root, "template")
+path_qsub <- fs::path(path_template, "qsub")
 # job status logs
 file_fmriprep_jobs <- fs::path(path_log, "fmriprep_jobs.tsv")
