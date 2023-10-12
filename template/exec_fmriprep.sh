@@ -37,7 +37,6 @@ ${FMRIPREP_CMD} \
     -w ${WORK_DIR} \
     --stop-on-first-crash \
     --notrack \
-    --resource-monitor \
     `# freesurfere options` \
     --fs-license-file ${FS_LICENSE} \
     --fs-subjects-dir ${FS_SUBJECTS_DIR}
