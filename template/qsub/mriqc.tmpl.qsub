@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#$ -S /bin/bash
 #$ -N mriqc
 #$ -o { project_root }/logs/qsub
 #$ -q { queue }

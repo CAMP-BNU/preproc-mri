@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#$ -S /bin/bash
 #$ -N clean-fmriprep
 #$ -o { project_root }/logs/qsub
 #$ -j y
