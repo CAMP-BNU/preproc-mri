@@ -42,8 +42,10 @@ if [ { clean_last } = all ] || [ { clean_last } = freesurfer ]; then
 fi
 
 # do fmriprep
-echo [`date "+%Y-%m-%d %T"`] "Begin fmriprep for subject: $SUBJECT."
+start_time=`date "+%Y-%m-%d %T"`
+echo [$start_time] "Begin fmriprep for subject: $SUBJECT."
 { path_template }/exec_fmriprep.sh
 exitcode=$?
-echo $SUBJECT$'\t'$JOB_ID-$SGE_TASK_ID$'\t'$exitcode$'\t'`date "+%Y-%m-%d %T"` >> { file_fmriprep_jobs }
-echo [`date "+%Y-%m-%d %T"`] "End fmriprep for subject: $SUBJECT with exit code $exitcode."
+finish_time=`date "+%Y-%m-%d %T"`
+echo $SUBJECT$'\t'$JOB_ID-$SGE_TASK_ID$'\t'$exitcode$'\t'$start_time$'\t'$finish_time >> { file_fmriprep_jobs }
+echo [$finish_time] "End fmriprep for subject: $SUBJECT with exit code $exitcode."
