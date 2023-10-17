@@ -17,6 +17,11 @@ if [ { omp_nthreads } != NA ]; then
 fi
 read SUBJECT <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1}}' { file_sublist })
 export SUBJECT
+export INPUT_DIR={ path_raw }
+export OUTPUT_DIR={ path_derivatives }/fmriprep
+export BIDS_DATABASE_DIR={ path_bids_db }
+export WORK_DIR={ path_tmp }
+export FS_SUBJECTS_DIR={ path_derivatives }/freesurfer
 
 clean_last_results () {{
     local path=$1/sub-$SUBJECT
@@ -29,19 +34,15 @@ clean_last_results () {{
 
 # clean last results if requested
 if [ { clean_last } = all ] || [ { clean_last } = results ]; then
-    clean_last_results { path_derivatives }/fmriprep "fmriprep output"
+    clean_last_results $OUTPUT_DIR "fmriprep output"
 fi
 # clean fs files if requested
 if [ { clean_last } = all ] || [ { clean_last } = freesurfer ]; then
-    clean_last_results { path_derivatives }/fmriprep/sourcedata/freesurfer freesurfer
+    clean_last_results $FS_SUBJECTS_DIR freesurfer
 fi
 
 # do fmriprep
 echo [`date "+%Y-%m-%d %T"`] "Begin fmriprep for subject: $SUBJECT."
-export INPUT_DIR={ path_raw }
-export OUTPUT_DIR={ path_derivatives }/fmriprep
-export WORK_DIR={ path_tmp }
-export BIDS_DATABASE_DIR={ path_bids_db }
 { path_template }/exec_fmriprep.sh
 exitcode=$?
 echo $SUBJECT$'\t'$JOB_ID-$SGE_TASK_ID$'\t'$exitcode$'\t'`date "+%Y-%m-%d %T"` >> { file_fmriprep_jobs }
