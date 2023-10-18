@@ -7,8 +7,11 @@
 DIR_SELF=`dirname $0`
 
 ${HEUDICONV_CMD} \
-    -d ${PROJECT_ROOT}/sourcedata/{subject}_*_{session}/*/*/*.IMA \
-    -o ${PROJECT_ROOT}/rawdata -s $SUBJECT -ss $SESSION \
-    -f ${DIR_SELF}/heudiconv/heuristic.py \
+    --dicom_dir_template ${PROJECT_ROOT}/sourcedata/{subject}_*_{session}/*/*/*.IMA \
+    --outdir ${PROJECT_ROOT}/rawdata \
+    --subjects $SUBJECT \
+    --ses $SESSION \
+    --heuristic ${DIR_SELF}/heudiconv/heuristic.py \
     --anon-cmd ${DIR_SELF}/heudiconv/format_subject.py \
-    -c dcm2niix -b --overwrite --minmeta
+    --converter dcm2niix \
+    --bids --overwrite --minmeta

@@ -34,7 +34,7 @@ ${FMRIPREP_CMD} \
     --output-spaces ${OUTPUT_SPACES} \
     --cifti-output \
     `# other options` \
-    -w ${WORK_DIR} \
+    --work-dir ${WORK_DIR} \
     --stop-on-first-crash \
     --notrack \
     `# freesurfere options` \

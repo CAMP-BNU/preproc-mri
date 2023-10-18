@@ -21,12 +21,12 @@ ${MARQC_CMD} \
     --session-id ${SESSION} \
     --bids-database-dir ${BIDS_DATABASE_DIR} \
     `# instrumental options` \
-    -w ${PROJECT_ROOT}/tmp \
+    --work-dir ${PROJECT_ROOT}/tmp \
     --write-graph --verbose-reports --no-sub \
     `# performance related` \
     --nthreads $NTHREADS \
     --omp-nthreads $OMPTHREADS \
     --mem_mb $MEMMB \
-    -f \
+    --float32 \
     `# workflow config` \
     --ica --fft-spikes-detector --fd_thres 0.3
