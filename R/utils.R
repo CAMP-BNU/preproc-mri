@@ -13,14 +13,12 @@ parse_arguments <- function() {
     add_argument("--site", "The site", short = "-t") |>
     add_argument("--sid", "The subject id", short = "-i", nargs = Inf) |>
     add_argument(
-      "--force",
-      "Force run even if it is done?",
-      flag = TRUE
-    ) |>
-    add_argument(
-      "--rerun-invalidate",
-      "Try re-running all invalidated subjects?",
-      flag = TRUE
+      "--rerun",
+      paste(
+        "Specify the level of analysis re-run.",
+        "1: only unprocessed, 2: re-run invalidated, 3: re-run all."
+      ),
+      default = 1
     ) |>
     add_argument(
       "--max-jobs",
@@ -191,12 +189,6 @@ validate_argv <- function(argv) {
       "Cannot specify --session without --site and --sid specified" =
         is.na(argv$session) || !(anyNA(argv[c("site", "sid")]))
     )
-  }
-  if (context == "fmriprep") {
-    if (argv$skip_session_check && argv$rerun_invalidate) {
-      warning("Enabling --skip-session-check will disable --rerun-invalidate")
-      argv$rerun_invalidate <- FALSE
-    }
   }
   argv
 }

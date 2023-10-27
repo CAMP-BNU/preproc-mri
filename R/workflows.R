@@ -8,7 +8,7 @@ prepare_jobs <- function() {
   )
   if (context == "heudiconv") {
     jobs_list <- list_jobs_whole_heudiconv()
-    jobs_status <- list_jobs_status_heudiconv(argv$rerun_invalidate)
+    jobs_status <- list_jobs_status_heudiconv(argv$rerun >= 2)
   }
   if (context == "fmriprep") {
     jobs_list <- list_jobs_whole_fmriprep(argv$skip_session_check)
@@ -16,7 +16,7 @@ prepare_jobs <- function() {
   }
   if (context == "mriqc") {
     jobs_list <- list_jobs_whole_mriqc()
-    jobs_status <- list_jobs_status_mriqc(argv$rerun_invalidate)
+    jobs_status <- list_jobs_status_mriqc(argv$rerun >= 2)
   }
   jobs_list |>
     left_join(jobs_status, by = keys) |>
@@ -41,20 +41,15 @@ extract_todo <- function(jobs) {
     }
     jobs
   }
-  jobs_for_sub <- jobs |>
+  jobs_selected <- jobs |>
     filter_field("subject") |>
     filter_field("site") |>
     filter_field("sid") |>
-    filter_field("session")
-  bind_rows(
-    filter(jobs_for_sub, status == "todo"),
-    if (argv$rerun_invalidate) {
-      filter(jobs_for_sub, status == "incomplete")
-    },
-    if (argv$force) {
-      filter(jobs_for_sub, status == "done")
-    }
-  )
+    filter_field("session") |>
+    filter(
+      factor(status, c("todo", "incomplete", "done")) |>
+        as.integer() <= argv$rerun
+    )
 }
 
 #' Execute given jobs
