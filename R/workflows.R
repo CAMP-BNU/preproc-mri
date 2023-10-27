@@ -71,7 +71,7 @@ execute_jobs <- function(jobs) {
       print(jobs)
     } else {
       withr::with_environment(
-        rlang::env(!!!lst(!!!argv[-1], num_jobs)),
+        argv[-1],
         rlang::exec(paste0("commit_", context), jobs)
       )
     }

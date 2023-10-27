@@ -89,6 +89,37 @@ parse_arguments <- function() {
   parse_args(parser) |> validate_argv()
 }
 
+#' Commit command with qsub
+#'
+#' @param command The command to be committed.
+#' @param disp_name The display name of the job.
+#' @param num_jobs Number of jobs. It only affect the messages. If not `NULL`,
+#'   the message will add `"array"` and show the number of jobs.
+#' @param file_subjects The file storing all the subjects to be processed. If
+#'   both `num_jobs` and `message` is no `NULL`, the message will show the file
+#'   name.
+#' @returns The job id of the committed job (invisible).
+commit <- function(command, disp_name, num_jobs = NULL, file_sublist = NULL) {
+  script <- tempfile()
+  write_lines(command, script)
+  if (is.null(num_jobs)) {
+    message(str_glue("Commiting job: {disp_name}."))
+  } else {
+    message(
+      str_glue("Commiting array job: {disp_name}, job count: { num_jobs }.")
+    )
+    if (!is.null(file_sublist)) {
+      message(str_glue("See file { file_sublist } for full list of subjects."))
+    }
+  }
+  job_id <- system(
+    str_glue("qsub -terse { script }"),
+    intern = TRUE
+  )
+  message(str_glue("Commiting job succeeded as ({ job_id })."))
+  invisible(job_id)
+}
+
 #' Validate data based on file counts
 #'
 #' Used for generated data validation.

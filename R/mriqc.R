@@ -46,12 +46,13 @@ commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
   sublist |>
     select(subject, session) |>
     write_delim(file_sublist, col_names = FALSE)
-  script_qsub <- tempfile()
-  script_content <- fs::path(path_qsub, "mriqc.tmpl.qsub") |>
+  fs::path(path_qsub, "mriqc.tmpl.qsub") |>
     read_file() |>
-    str_glue()
-  write_lines(script_content, script_qsub)
-  message(str_glue("Commiting job array of { num_jobs } jobs."))
-  message(str_glue("See file { file_sublist } for full list of subjects."))
-  system(str_glue("qsub { script_qsub }"))
+    str_glue() |>
+    commit(
+      "mriqc",
+      num_jobs = nrow(sublist),
+      file_sublist = file_sublist
+    )
+  invisible()
 }

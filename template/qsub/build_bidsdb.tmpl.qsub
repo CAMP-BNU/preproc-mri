@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#$ -S /bin/bash
+#$ -N build-bidsdb
+#$ -o { project_root }/logs/qsub
+#$ -j y
+#$ -hold_jid { job_main_id }
+
+echo [`date "+%Y-%m-%d %H:%M:%S"`] "Rebuild bids layout database."
+{ project_root }/bids_db/init.py -r
+echo [`date "+%Y-%m-%d %H:%M:%S"`] "Rebuild bids layout database done."
