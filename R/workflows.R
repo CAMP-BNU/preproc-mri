@@ -41,7 +41,7 @@ extract_todo <- function(jobs) {
     }
     jobs
   }
-  jobs_selected <- jobs |>
+  jobs |>
     filter_field("subject") |>
     filter_field("site") |>
     filter_field("sid") |>
@@ -71,7 +71,7 @@ execute_jobs <- function(jobs) {
       print(jobs)
     } else {
       withr::with_environment(
-        argv[-1],
+        rlang::as_environment(argv[-1]),
         rlang::exec(paste0("commit_", context), jobs)
       )
     }
