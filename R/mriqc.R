@@ -46,12 +46,13 @@ commit_mriqc <- function(sublist, file_sublist = NULL, ...) {
   sublist |>
     select(subject, session) |>
     write_delim(file_sublist, col_names = FALSE)
+  num_jobs <- nrow(sublist)
   fs::path(path_qsub, "mriqc.tmpl.qsub") |>
     read_file() |>
     str_glue() |>
     commit(
       "mriqc",
-      num_jobs = nrow(sublist),
+      num_jobs = num_jobs,
       file_sublist = file_sublist
     )
   invisible()

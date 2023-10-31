@@ -50,12 +50,13 @@ commit_fmriprep <- function(sublist, file_sublist = NULL, ...) {
   if (!is.na(nthreads) && nthreads > 1) {
     use_pe <- str_glue("#$ -pe { pe } { nthreads }")
   }
+  num_jobs <- nrow(sublist)
   job_main <- fs::path(path_qsub, "fmriprep.tmpl.qsub") |>
     read_file() |>
     str_glue() |>
     commit(
       "fmriprep",
-      num_jobs = nrow(sublist),
+      num_jobs = num_jobs,
       file_sublist = file_sublist
     )
   # jobs to clean temporary files

@@ -60,12 +60,13 @@ commit_heudiconv <- function(sublist, file_sublist = NULL, ...) {
     # we have two subject labels here, heudiconv used the original one
     select(sub_dcm, session) |>
     write_delim(file_sublist, col_names = FALSE)
+  num_jobs <- nrow(sublist)
   job_main <- fs::path(path_qsub, "heudiconv.tmpl.qsub") |>
     read_file() |>
     str_glue() |>
     commit(
       "heudiconv",
-      num_jobs = nrow(file_sublist),
+      num_jobs = num_jobs,
       file_sublist = file_sublist
     )
   job_main_id <- str_extract(job_main, "^\\d+")
