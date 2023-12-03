@@ -58,7 +58,7 @@ parse_arguments <- function() {
     parser <- parser |>
       add_argument("--session", "The session number", short = "-e")
   }
-  if (context %in% c("mriqc", "fmriprep")) {
+  if (context %in% c("mriqc", "fmriprep", "xcpd")) {
     parser <- parser |>
       add_argument(
         "--subject",
