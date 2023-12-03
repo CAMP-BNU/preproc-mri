@@ -17,11 +17,10 @@ if [ { omp_nthreads } != NA ]; then
 fi
 read SUBJECT <<< $(awk -v id=$SGE_TASK_ID 'NR==id {{print $1}}' { file_sublist })
 export SUBJECT
+export CONFIG_PARAMS=xcpd_{ config_params }
 export INPUT_DIR={ path_raw }
-export OUTPUT_DIR={ path_derivatives }/xcpd
-export BIDS_DATABASE_DIR={ path_bids_db }
+export OUTPUT_DIR={ path_derivatives }/$CONFIG_PARAMS
 export WORK_DIR={ path_tmp }
-export CONFIG_PARAMS={ config_params }
 export PARAMS_POST="{ params_post }"
 
 # do xcpd
