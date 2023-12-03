@@ -7,6 +7,7 @@ parse_arguments <- function() {
     heudiconv = "Submitting jobs to convert dicom to bids format",
     mriqc = "Submitting jobs to do mriqc for bids data",
     fmriprep = "Submitting jobs to do fmriprep for bids data",
+    xcpd = "Submmiting jobs to do post-processing steps for connectivity",
     stop("Unsupported routine context.")
   )
   parser <- arg_parser(name) |>
@@ -35,6 +36,23 @@ parse_arguments <- function() {
       "--dry-run",
       "Skip really executing the jobs?",
       flag = TRUE
+    ) |>
+    add_argument(
+      "--nthreads",
+      "Number of threads in processing.",
+      short = "-u"
+    ) |>
+    add_argument(
+      "--omp-nthreads",
+      "Maximum number of threads per-process."
+    ) |>
+    add_argument(
+      "--pe",
+      paste(
+        "The parallel environment.",
+        "Used when `--nthreads` is set and larger than 1."
+      ),
+      default = "ompi"
     )
   if (context %in% c("heudiconv", "mriqc")) {
     parser <- parser |>
@@ -67,23 +85,15 @@ parse_arguments <- function() {
           "Can be 'none', 'results', 'freesurfer' or 'all'."
         ),
         default = "none"
-      ) |>
+      )
+  }
+  if (context %in% "xcpd") {
+    parser <- parser |>
       add_argument(
-        "--nthreads",
-        "Number of threads in processing.",
-        short = "-u"
-      ) |>
-      add_argument(
-        "--omp-nthreads",
-        "Maximum number of threads per-process."
-      ) |>
-      add_argument(
-        "--pe",
-        paste(
-          "The parallel environment.",
-          "Used when `--nthreads` is set and larger than 1."
-        ),
-        default = "ompi"
+        "--config-params",
+        "Name of configuration for xcp_d post processing parameters.",
+        short = "-g",
+        default = "default"
       )
   }
   parse_args(parser) |> validate_argv()

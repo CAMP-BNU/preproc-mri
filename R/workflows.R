@@ -2,7 +2,8 @@
 prepare_jobs <- function() {
   keys <- switch(context,
     heudiconv = c("site", "sid", "session"),
-    fmriprep = c("subject", "site", "sid"),
+    fmriprep = ,
+    xcpd = c("subject", "site", "sid"),
     mriqc = c("subject", "session"),
     stop("Unknown context: ", context)
   )
@@ -17,6 +18,10 @@ prepare_jobs <- function() {
   if (context == "mriqc") {
     jobs_list <- list_jobs_whole_mriqc()
     jobs_status <- list_jobs_status_mriqc(argv$rerun >= 2)
+  }
+  if (context == "xcpd") {
+    jobs_list <- list_jobs_whole_xcpd()
+    jobs_status <- list_jobs_status_xcpd()
   }
   jobs_list |>
     left_join(jobs_status, by = keys) |>

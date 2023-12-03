@@ -11,3 +11,5 @@ path_template <- fs::path(project_root, "template")
 path_qsub <- fs::path(path_template, "qsub")
 # job status logs
 file_fmriprep_jobs <- fs::path(path_log, "fmriprep_jobs.tsv")
+# configurations
+file_config_xcpd <- fs::path(project_root, "config", "xcpd.yml")
