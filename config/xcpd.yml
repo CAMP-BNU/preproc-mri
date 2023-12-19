@@ -6,3 +6,12 @@ default:
     --lower-bpf 0.01 --upper-bpf 0.1
     --motion-filter-type notch --band-stop-min 12 --band-stop-max 18
     --head-radius 50 --fd-thresh 0.3
+
+no_gsr:
+  params: >
+    --smoothing 3
+    --despike
+    --nuisance-regressors 24P
+    --lower-bpf 0.01 --upper-bpf 0.1
+    --motion-filter-type notch --band-stop-min 12 --band-stop-max 18
+    --head-radius 50 --fd-thresh 0.3
