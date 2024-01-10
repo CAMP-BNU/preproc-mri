@@ -49,10 +49,12 @@ commit_xcpd <- function(sublist, file_sublist = NULL, ...) {
     use_pe <- str_glue("#$ -pe { pe } { nthreads }")
   }
   num_jobs <- nrow(sublist)
-  params_post <- config::get(
-    "params",
-    config = config_params,
-    file = file_config_xcpd
+  params_post <- clize_list(
+    config::get(
+      "params",
+      config = config_params,
+      file = file_config_xcpd
+    )
   )
   job_main <- fs::path(path_qsub, "xcpd.tmpl.qsub") |>
     read_file() |>

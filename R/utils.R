@@ -233,3 +233,21 @@ validate_argv <- function(argv) {
   }
   argv
 }
+
+clize_list <- function(l) {
+  deparse_arg <- function(value, name) {
+    if (is.logical(value)) {
+      if (isTRUE(value)) {
+        str_glue("--{name}")
+      } else {
+        ""
+      }
+    } else {
+      str_glue("--{name} {value}")
+    }
+  }
+  str_c(
+    imap(l, deparse_arg),
+    collapse = " "
+  )
+}

@@ -1,17 +1,18 @@
+# please refer to https://xcp-d.readthedocs.io/en/latest/usage.html#command-line-arguments
 default:
-  params: >
-    --smoothing 3
-    --despike
-    --nuisance-regressors 36P
-    --lower-bpf 0.01 --upper-bpf 0.1
-    --motion-filter-type notch --band-stop-min 12 --band-stop-max 18
-    --head-radius 50 --fd-thresh 0.3
+  params:
+    combineruns: true
+    smoothing: 3
+    despike: true
+    nuisance-regressors: 36P
+    lower-bpf: 0.01
+    upper-bpf: 0.1
+    motion-filter-type: notch
+    band-stop-min: 12
+    band-stop-max: 18
+    head-radius: 50
+    fd-thresh: 0.3
 
 no_gsr:
-  params: >
-    --smoothing 3
-    --despike
-    --nuisance-regressors 24P
-    --lower-bpf 0.01 --upper-bpf 0.1
-    --motion-filter-type notch --band-stop-min 12 --band-stop-max 18
-    --head-radius 50 --fd-thresh 0.3
+  params:
+    nuisance-regressors: 24P
