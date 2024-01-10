@@ -39,10 +39,17 @@ extract_todo <- function(jobs) {
     }
     jobs <- filter(jobs, .data[[field]] %in% argv[[field]])
     if (nrow(jobs) == 0) {
-      stop("Cannot found given data.")
+      cli::cli_abort(
+        c(x = "No suitable data found based on your specification.")
+      )
     }
-    if (all(jobs$status == "done") && !argv$force) {
-      stop("Given data have been finished. Try adding `-f` if insisted.")
+    if (all(jobs$status == "done") && argv$rerun < 3) {
+      cli::cli_abort(
+        c(
+          x = "Given data have been finished.",
+          i = "Try adding `--rerun all` if insisted."
+        )
+      )
     }
     jobs
   }

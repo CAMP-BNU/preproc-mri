@@ -17,9 +17,9 @@ parse_arguments <- function() {
       "--rerun",
       paste(
         "Specify the level of analysis re-run.",
-        "1: only unprocessed, 2: re-run invalidated, 3: re-run all."
+        "Possible values are 'unprocessed' (default), 'invalid', 'all'."
       ),
-      default = 1
+      default = "unprocessed"
     ) |>
     add_argument(
       "--max-jobs",
@@ -187,7 +187,7 @@ validate_data_file_sum <- function(type,
     table()
   file_sum_target <- file_sum_min[[part]]
   if (length(file_sum) == length(file_sum_target) &&
-        all(file_sum == file_sum_target)) {
+    all(file_sum == file_sum_target)) {
     return("done")
   } else {
     return("incomplete")
@@ -231,6 +231,12 @@ validate_argv <- function(argv) {
         is.na(argv$session) || !(anyNA(argv[c("site", "sid")]))
     )
   }
+  argv$rerun <- as.integer(
+    factor(
+      argv$rerun,
+      levels = c("unprocessed", "invalid", "all")
+    )
+  )
   argv
 }
 
