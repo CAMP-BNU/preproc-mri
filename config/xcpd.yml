@@ -1,7 +1,7 @@
 # please refer to https://xcp-d.readthedocs.io/en/latest/usage.html#command-line-arguments
 default:
   params:
-    combineruns: true
+    cifti: true
     smoothing: 3
     despike: true
     nuisance-regressors: 36P
@@ -15,4 +15,13 @@ default:
 
 no_gsr:
   params:
+    nuisance-regressors: 24P
+
+default_mni:
+  params:
+    cifti: false
+
+no_gsr_mni:
+  params:
+    cifti: false
     nuisance-regressors: 24P

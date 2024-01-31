@@ -20,7 +20,6 @@ ${XCPD_CMD} \
     ${FMRI_DIR} ${OUTPUT_DIR} participant \
     `# filtering bids queries` \
     --participant_label ${SUBJECT} \
-    --cifti \
     `# post-processing parameters` \
     $PARAMS_POST \
     `# performance options` \
