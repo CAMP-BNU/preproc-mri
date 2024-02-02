@@ -249,11 +249,12 @@ clize_list <- function(l) {
         ""
       }
     } else {
+      value <- str_c(value, collapse = " ")
       str_glue("--{name} {value}")
     }
   }
   str_c(
-    imap(l, deparse_arg),
+    imap_chr(l, deparse_arg),
     collapse = " "
   )
 }

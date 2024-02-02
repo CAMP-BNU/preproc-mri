@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # prepare command of fmriprep
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
-: ${XCPD_CONTAINER:=/opt/fmritools/containers/xcp_d-0.6.1rc1.sif}
+: ${XCPD_CONTAINER:=/opt/fmritools/containers/xcp_d-unstable.sif}
 : ${XCPD_CMD:=${SINGULARITY_CMD} run -e -B /seastor,$HOME:/home/xcp_d --home /home/xcp_d ${XCPD_CONTAINER}}
 # positional parameters
 : ${CONFIG_PARAMS:=example}
@@ -27,6 +27,7 @@ ${XCPD_CMD} \
     --omp-nthreads ${OMPTHREADS} \
     `# other options` \
     --work-dir ${WORK_DIR} \
+    --stop-on-first-crash \
     --notrack \
     `# freesurfere options` \
     --fs-license-file ${FS_LICENSE}
