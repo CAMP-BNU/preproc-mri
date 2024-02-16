@@ -11,7 +11,8 @@ default:
     band-stop-min: 12
     band-stop-max: 18
     head-radius: 50
-    fd-thresh: 0.3
+    fd-thresh: 0 # censoring could be done afterwards
+    min-time: 0
     atlases: [4S156Parcels, 4S256Parcels, 4S356Parcels, 4S456Parcels]
 
 no_gsr:
