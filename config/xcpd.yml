@@ -13,7 +13,6 @@ default:
     head-radius: 50
     fd-thresh: 0 # censoring could be done afterwards
     min-time: 0
-    atlases: [4S156Parcels, 4S256Parcels, 4S356Parcels, 4S456Parcels]
 
 no_gsr:
   params:
