@@ -2,7 +2,7 @@
 default:
   params:
     cifti: true
-    smoothing: 3
+    smoothing: 0
     despike: true
     nuisance-regressors: 36P
     lower-bpf: 0.01
