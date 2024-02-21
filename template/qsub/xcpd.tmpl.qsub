@@ -31,3 +31,8 @@ exitcode=$?
 finish_time=`date "+%Y-%m-%d %T"`
 echo $SUBJECT$'\t'$JOB_ID-$SGE_TASK_ID$'\t'$exitcode$'\t'$start_time$'\t'$finish_time >> { file_xcpd_jobs }
 echo [$finish_time] "End xcpd for subject: $SUBJECT with exit code $exitcode."
+
+# if execution exits with error, signal it to the queue by exit with code 100 to hold further jobs
+if [ $exitcode -ne 0 ]; then
+    exit 100
+fi
