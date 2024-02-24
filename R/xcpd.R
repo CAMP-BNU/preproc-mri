@@ -50,10 +50,13 @@ commit_xcpd <- function(sublist, file_sublist = NULL, ...) {
   }
   num_jobs <- nrow(sublist)
   params_post <- clize_list(
-    config::get(
-      "params",
-      config = config_params,
-      file = file_config_xcpd
+    withr::with_envvar(
+      c(PROJECT_ROOT = project_root),
+      config::get(
+        "params",
+        config = config_params,
+        file = file_config_xcpd
+      )
     )
   )
   job_main <- fs::path(path_qsub, "xcpd.tmpl.qsub") |>

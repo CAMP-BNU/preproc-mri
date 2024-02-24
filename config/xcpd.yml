@@ -17,6 +17,7 @@ default:
 no_gsr:
   params:
     nuisance-regressors: 24P
+    custom-confounds: !expr fs::path(Sys.getenv("PROJECT_ROOT"), "xcp_d/custom_confounds")
 
 default_mni:
   params:
