@@ -4,7 +4,6 @@ default:
     cifti: true
     smoothing: 0
     despike: true
-    nuisance-regressors: 36P
     lower-bpf: 0.01
     upper-bpf: 0.1
     motion-filter-type: notch
@@ -15,16 +14,22 @@ default:
     min-time: 0
     min-coverage: 0
 
+gsr:
+  params:
+    nuisance-regressors: 36P
+
 no_gsr:
   params:
     nuisance-regressors: 24P
     custom-confounds: !expr fs::path(Sys.getenv("PROJECT_ROOT"), "xcp_d/custom_confounds")
 
-default_mni:
+gsr_mni:
   params:
     cifti: false
+    nuisance-regressors: 36P
 
 no_gsr_mni:
   params:
     cifti: false
     nuisance-regressors: 24P
+    custom-confounds: !expr fs::path(Sys.getenv("PROJECT_ROOT"), "xcp_d/custom_confounds")
