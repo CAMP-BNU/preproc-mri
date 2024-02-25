@@ -13,6 +13,7 @@ default:
     head-radius: 50
     fd-thresh: 0 # censoring could be done afterwards
     min-time: 0
+    min-coverage: 0
 
 no_gsr:
   params:
