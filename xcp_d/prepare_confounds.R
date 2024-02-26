@@ -8,8 +8,10 @@ layout_confounds <- bids$BIDSLayout(
   database_path = fs::path("derivatives/layout_fmriprep")
 )$get(desc = "confounds", extension = "tsv")
 path_new <- "xcp_d/custom_confounds"
-for (layout in layout_confounds) {
-  cur_path <- layout$path
+walk(
+  layout_confounds,
+  \(layout) {
+    cur_path <- layout$path
   read_tsv(cur_path, show_col_types = FALSE, na = "n/a") |>
     select(
       # global signals for CSF and WM
@@ -17,4 +19,6 @@ for (layout in layout_confounds) {
     ) |>
     mutate(across(everything(), \(x) replace_na(x, 0))) |>
     write_tsv(fs::path(path_new, fs::path_file(cur_path)), na = "")
-}
+  },
+  .progress = TRUE
+)
