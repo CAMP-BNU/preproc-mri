@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # prepare command of fmriprep
 : ${SINGULARITY_CMD:=/opt/fmritools/singularity/bin/singularity}
-: ${XCPD_CONTAINER:=/opt/fmritools/containers/xcp_d-0.6.1.sif}
+: ${XCPD_CONTAINER:=/opt/fmritools/containers/xcp_d-0.6.2.sif}
 : ${XCPD_CMD:=${SINGULARITY_CMD} run -e -B /seastor,$HOME:/home/xcp_d --home /home/xcp_d ${XCPD_CONTAINER}}
 # positional parameters
 : ${CONFIG_PARAMS:=example}
