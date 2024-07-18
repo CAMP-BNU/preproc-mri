@@ -11,6 +11,7 @@ Depends:
 Imports: 
     argparser,
     box,
+    config,
     devtools
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
