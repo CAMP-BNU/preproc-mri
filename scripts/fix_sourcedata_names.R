@@ -22,3 +22,8 @@ tibble(path = fs::dir_ls("sourcedata", type = "dir")) |>
   filter(str_detect(path, pat_rm)) |>
   mutate(new_path = str_remove(path, pat_rm)) |>
   pwalk(rename_with_backup)
+
+# subject id: 187 -> 172
+tibble(path = fs::dir_ls("sourcedata", type = "dir", regexp = "SUB187")) |>
+  mutate(new_path = str_replace_all(path, "SUB187", "SUB172")) |>
+  pwalk(fs::file_move)
