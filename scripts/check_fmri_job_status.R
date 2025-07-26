@@ -4,6 +4,7 @@
 # https://github.com/nipreps/fmriprep/issues/3426
 project_root <- fs::path_dir(box::file())
 devtools::load_all(project_root)
+success_pattern <- "fMRIPrep finished successfully!"
 job_status <- read_tsv(
   file_fmriprep_jobs,
   col_names = c("subject", "job", "status", "start_time", "finish_time"),
@@ -12,12 +13,12 @@ job_status <- read_tsv(
   separate_wider_delim(job, "-", names = c("job_id", "job_subid")) |>
   slice_tail(n = 1, by = subject) |>
   mutate(
-    log_failed = fs::path(
+    log_success = fs::path(
       path_log, "qsub",
       str_glue("fmriprep.o{job_id}.{job_subid}")
     ) |>
       map_lgl(
-        \(file) str_detect(read_file(file), "crash"),
+        \(file) str_detect(read_file(file), success_pattern),
         .progress = TRUE
       )
   )
