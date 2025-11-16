@@ -16,3 +16,4 @@ click = "*"
 
 [project.scripts]
 preproc = "preproc.cli:cli"
+preproc-run = "preproc.runner:main"
