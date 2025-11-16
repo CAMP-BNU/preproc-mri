@@ -2,3 +2,53 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Python generated files and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+venv/
+env.bak/
+
+# Pytest
+.pytest_cache/
+coverage.xml
+.cache
+.coverage
+htmlcov/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# dotenv (local secrets)
+.env
+
+# misc logs and runtime
+*.log
+*.tmp
+
+# Node artifacts (unlikely here, but safe)
+node_modules/
+
