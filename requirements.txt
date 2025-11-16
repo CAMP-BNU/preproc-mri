@@ -1,0 +1,6 @@
+python-dotenv
+pyyaml
+pandas
+click
+pytest
+pytest-cov

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "preproc"
+version = "0.1.0"
+requires-python = ">=3.9"
+description = "Python conversion of the preproc-mri R package; Python package name `preproc`"
+
+[project.dependencies]
+python-dotenv = "*"
+pyyaml = "*"
+pandas = "*"
+click = "*"
+
+[project.scripts]
+preproc = "preproc.cli:cli"
