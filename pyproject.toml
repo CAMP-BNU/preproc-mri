@@ -8,12 +8,22 @@ version = "0.1.0"
 requires-python = ">=3.9"
 description = "Python conversion of the preproc-mri R package; Python package name `preproc`"
 
-[project.dependencies]
-python-dotenv = "*"
-pyyaml = "*"
-pandas = "*"
-click = "*"
+dependencies = [
+	"python-dotenv",
+	"pyyaml",
+	"pandas",
+	"click",
+]
+
+[project.optional-dependencies]
+dev = [
+	"pytest",
+	"pytest-cov",
+]
 
 [project.scripts]
 preproc = "preproc.cli:cli"
 preproc-run = "preproc.runner:main"
+
+[tool.setuptools.packages.find]
+include = ["preproc*"]
