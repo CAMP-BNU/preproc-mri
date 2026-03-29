@@ -1,45 +1,63 @@
-# Pre-processing MRI data
+# preproc-mri（Python 主力版）
 
-This repository contains the code for pre-processing MRI data. The codes are highly customized for the data we have. However, the codes can be used as a reference for pre-processing MRI data.
+本仓库用于 MRI 预处理流程管理，当前**推荐以 Python 工作流为主**，R 脚本作为历史兼容与参考实现保留。
 
-## Requirements
+## 1. 处理流程（推荐）
 
-R and python are required to run the codes. Additionally, we utilize a lot of containers including heudiconv, mriqc and fmriprep. Please refer to the [BIDS documentation](https://bids.neuroimaging.io/) for more information.
+建议按以下阶段执行：
 
-## Usage
+1. `heudiconv`：DICOM → BIDS
+2. `mriqc`：质量评估
+3. `fmriprep`：功能像预处理
+4. `xcpd`：后处理与连接分析准备
 
-Pre-processing is done with the following steps:
+你可以使用单阶段命令，也可以使用配置驱动的一键批处理（`batch`）。
 
-1. Convert DICOM files to BIDS format: `./preprocess/perform_heudiconv.R`. Run `./preprocess/perform_heudiconv.R -h` for more information.
-2. Run MRIQC: `./preprocess/perform_mriqc.R`. Run `./preprocess/perform_mriqc.R -h` for more information.
-3. Run pre-processing for functional data (i.e., fmriprep): `./preprocess/perform_fmriprep.R`. Run `./preprocess/perform_fmriprep.R -h` for more information.
+## 2. Python 环境准备
 
-## Notes
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows 请使用对应激活命令
+pip install -r requirements.txt
+```
 
-The repository is organized into the following structure:
+建议设置项目根目录：
 
-- Data Folders:
-  - Folder `sourcedata`: contains the DICOM files.
-  - Folder `rawdata`: contains the BIDS format data.
-  - Folder `bids_db`: contains the database of BIDS Layout. This is used to speed up the pre-processing.
-  - Folder `derivatives`: contains the pre-processed data.
-  - Folder `backup`: contains backup data which are deemed obsolete.
-  - Folder `tmp`: contains the temporary files generated during the pre-processing (mostly will be deleted after the pre-processing automatically).
-  - Folder `logs`: contains the log files generated during the pre-processing by the cluster.
-- Code Folders:
-  - Folder `R`: contains the R scripts to do the pre-processing.
-  - Folder `preprocess`: contains the end point script to do the pre-processing.
-  - Folder `template`: contains the template files (you can find the shell and python templates here) to do the pre-processing.
+```bash
+export PROJECT_ROOT=$(pwd)
+```
 
-### fMRIprep
+## 3. 单阶段执行示例
 
-For storage considerations, we specified the outspaces as:
+```bash
+python -m preproc.cli heudiconv --site TJNU --sid 001 --session ses-1 --dry-run
+python -m preproc.cli mriqc --subject sub-TJNU001 --dry-run
+python -m preproc.cli fmriprep --site TJNU --sid 001 --dry-run
+python -m preproc.cli xcpd --site TJNU --sid 001 --dry-run
+```
 
-- `MNI152NLin6Asym`: we do not include `MNI152NLin2009cAsym`.
-- `anat`: T1 weighted non-standard space.
-- `fsaverage6`: freesurfer's surface based space.
-- `fsLR`: aka CIFTI output.
+## 4. 批处理（配置驱动，推荐）
 
-## TODO
+使用 YAML 一次定义多个阶段：
 
-ICA-AROMA was removed from fmriprep since 23.1.0, and a custom ICA-AROMA workflow is required.
+```bash
+python -m preproc.cli batch --config config/pipeline.example.yml --extra-args "--dry-run"
+```
+
+- `--only` 可只运行指定阶段（可重复传参）。
+- `--extra-args` 会透传到每个阶段（如 `--dry-run`、`--queue` 等）。
+
+## 5. 目录说明
+
+- `preproc/`：Python 主实现（推荐）
+- `scripts/`：Python 阶段脚本入口
+- `config/`：配置样例（含 batch YAML）
+- `template/`：qsub 与流程模板
+- `R/`、`preprocess/*.R`：历史 R 实现（兼容/参考）
+- `sourcedata/`、`rawdata/`、`derivatives/` 等：数据目录
+
+## 6. 说明
+
+- 本仓库流程与模板对当前数据组织有较强定制性。
+- 集群提交依赖 `qsub` 及对应容器/环境（如 heudiconv、mriqc、fmriprep、xcp_d）。
+- BIDS 规范参考：https://bids.neuroimaging.io/
