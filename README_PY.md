@@ -29,3 +29,20 @@ Limitations and next steps:
 - Some R-specific template placeholders are converted conservatively and should be reviewed.
 
 Feel free to ask for conversion of specific R files or deeper fidelity to the original R behavior.
+
+
+## Python-first orchestration (借鉴 preproc-fmri 的流程)
+
+为了更接近 `preproc-fmri` 这类“配置驱动 + 多阶段串行”的工作方式，仓库新增了 `batch` 命令：
+
+```bash
+python -m preproc.cli batch --config config/pipeline.example.yml --extra-args "--dry-run"
+```
+
+核心思路：
+- 在一个 YAML 文件中定义阶段顺序（heudiconv → mriqc → fmriprep → xcpd）。
+- 使用 `[args]` 定义共享参数。
+- 使用 `[stage_args.<stage>]` 覆盖阶段特定参数。
+- 支持 `--only` 只跑某几个阶段。
+
+示例配置见：`config/pipeline.example.yml`。

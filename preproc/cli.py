@@ -1,5 +1,6 @@
 import click
 from . import utils, workflows
+from .pipeline import run_pipeline_plan
 
 
 @click.group()
@@ -43,6 +44,17 @@ def heudiconv_cmd(ctx):
 def xcpd_cmd(ctx):
     """Run xcp_d job preparation and submission"""
     run_context('xcpd', ctx.args)
+
+
+
+
+@cli.command(name='batch')
+@click.option('--config', 'config_path', required=True, type=click.Path(exists=True, dir_okay=False), help='Path to pipeline YAML config.')
+@click.option('--only', multiple=True, help='Only run specific stages (can repeat).')
+@click.option('--extra-args', default='', help='Extra args forwarded to every stage, e.g. "--dry-run".')
+def batch_cmd(config_path, only, extra_args):
+    """Run a multi-stage preprocessing pipeline from a YAML plan."""
+    run_pipeline_plan(config_path=config_path, only=list(only) or None, extra_args=extra_args)
 
 
 if __name__ == '__main__':
