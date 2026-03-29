@@ -5,8 +5,6 @@ import shlex
 from typing import Any
 import yaml
 
-from . import utils, workflows
-
 VALID_STAGES = {"heudiconv", "mriqc", "fmriprep", "xcpd"}
 
 
@@ -80,8 +78,7 @@ def run_pipeline_plan(config_path: str | Path, only: list[str] | None = None, ex
 
 
 def _run_context(context: str, args_list: list[str] | None = None):
-    argv = utils.parse_arguments(context, args_list)
-    utils.validate_argv(context, argv)
-    jobs = workflows.prepare_jobs(context, argv)
-    todo = workflows.extract_todo(context, jobs, argv)
-    workflows.execute_jobs(context, todo, argv)
+    """Delegate to the canonical CLI execution path to avoid logic drift."""
+    from .cli import run_context
+
+    run_context(context, args_list)

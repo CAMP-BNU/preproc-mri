@@ -1,33 +1,33 @@
-# preproc-mri（Python 主力版）
+# preproc-mri (Python-first)
 
-本仓库用于 MRI 预处理流程管理，当前**推荐以 Python 工作流为主**，R 脚本作为历史兼容与参考实现保留。
+This repository manages MRI preprocessing workflows. **Python is now the recommended primary implementation**, while R scripts are retained for backward compatibility and reference.
 
-## 1. 处理流程（推荐）
+## 1. Recommended processing stages
 
-建议按以下阶段执行：
+Use the following stage order:
 
-1. `heudiconv`：DICOM → BIDS
-2. `mriqc`：质量评估
-3. `fmriprep`：功能像预处理
-4. `xcpd`：后处理与连接分析准备
+1. `heudiconv`: DICOM → BIDS
+2. `mriqc`: quality control
+3. `fmriprep`: functional preprocessing
+4. `xcpd`: post-processing for connectivity workflows
 
-你可以使用单阶段命令，也可以使用配置驱动的一键批处理（`batch`）。
+You can run stages individually or use the YAML-driven `batch` command.
 
-## 2. Python 环境准备
+## 2. Python environment setup
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows 请使用对应激活命令
+source .venv/bin/activate   # Use the matching activation command on Windows
 pip install -r requirements.txt
 ```
 
-建议设置项目根目录：
+Recommended environment variable:
 
 ```bash
 export PROJECT_ROOT=$(pwd)
 ```
 
-## 3. 单阶段执行示例
+## 3. Single-stage examples
 
 ```bash
 python -m preproc.cli heudiconv --site TJNU --sid 001 --session ses-1 --dry-run
@@ -36,28 +36,28 @@ python -m preproc.cli fmriprep --site TJNU --sid 001 --dry-run
 python -m preproc.cli xcpd --site TJNU --sid 001 --dry-run
 ```
 
-## 4. 批处理（配置驱动，推荐）
+## 4. Batch mode (config-driven, recommended)
 
-使用 YAML 一次定义多个阶段：
+Run all configured stages from one YAML file:
 
 ```bash
 python -m preproc.cli batch --config config/pipeline.example.yml --extra-args "--dry-run"
 ```
 
-- `--only` 可只运行指定阶段（可重复传参）。
-- `--extra-args` 会透传到每个阶段（如 `--dry-run`、`--queue` 等）。
+- `--only` runs only selected stages (repeatable flag).
+- `--extra-args` forwards additional args to every stage (e.g., `--dry-run`, `--queue`).
 
-## 5. 目录说明
+## 5. Repository layout
 
-- `preproc/`：Python 主实现（推荐）
-- `scripts/`：Python 阶段脚本入口
-- `config/`：配置样例（含 batch YAML）
-- `template/`：qsub 与流程模板
-- `R/`、`preprocess/*.R`：历史 R 实现（兼容/参考）
-- `sourcedata/`、`rawdata/`、`derivatives/` 等：数据目录
+- `preproc/`: primary Python implementation
+- `scripts/`: Python entry scripts per stage
+- `config/`: configuration examples (including batch YAML)
+- `template/`: qsub and workflow templates
+- `R/`, `preprocess/*.R`: legacy R implementation (compatibility/reference)
+- `sourcedata/`, `rawdata/`, `derivatives/`, etc.: data folders
 
-## 6. 说明
+## 6. Notes
 
-- 本仓库流程与模板对当前数据组织有较强定制性。
-- 集群提交依赖 `qsub` 及对应容器/环境（如 heudiconv、mriqc、fmriprep、xcp_d）。
-- BIDS 规范参考：https://bids.neuroimaging.io/
+- The workflow and templates are customized to this project's data conventions.
+- Cluster submission depends on `qsub` and corresponding runtime/container images (e.g., heudiconv, mriqc, fmriprep, xcp_d).
+- BIDS reference: https://bids.neuroimaging.io/
