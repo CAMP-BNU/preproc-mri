@@ -1,31 +1,50 @@
-# Python port of preproc
+# Python Usage Guide (Primary Workflow)
 
-This is an initial port of the `preproc-mri` R package (renamed to `preproc` for the Python port). It includes basic translations of R scripts and core functions used to prepare and submit cluster jobs for fMRI preprocessing pipelines.
+The repository now supports a complete Python-side orchestration flow, and Python should be treated as the default entrypoint for daily preprocessing.
 
-Key points:
-- Environment variables: use `PROJECT_ROOT` to set root directory. If not set, repository root is used.
-- CLI scripts: `scripts/perform_fmriprep.py`, `scripts/perform_mriqc.py`, `scripts/perform_heudiconv.py`, `scripts/perform_xcpd.py` replicate R scripts.
-- Qsub templates are rendered using `${VAR}` placeholders with Python substitution.
+## Core capabilities
 
-Quick start:
+- Stage-level execution: `heudiconv` / `mriqc` / `fmriprep` / `xcpd`
+- Config-driven batch execution via `batch`
+- Shared and stage-specific argument control via YAML
 
-1. Create a Python environment (recommended) and install dependencies. Example using venv and pip:
+## Quick start
 
-```pwsh
+### 1) Install dependencies
+
+```bash
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Run the fmriprep script (example):
+### 2) Set project root (recommended)
 
-```pwsh
-python scripts/perform_fmriprep.py --site TJNU --sid 001
+```bash
+export PROJECT_ROOT=$(pwd)
 ```
 
-Limitations and next steps:
-- This is an initial conversion producing a Python skeleton; behavior should be verified on a real dataset and cluster environment.
-- More detailed validation and unit tests are needed.
-- Some R-specific template placeholders are converted conservatively and should be reviewed.
+### 3) Single-stage example
 
-Feel free to ask for conversion of specific R files or deeper fidelity to the original R behavior.
+```bash
+python -m preproc.cli fmriprep --site TJNU --sid 001 --dry-run
+```
+
+## Batch mode (inspired by preproc-fmri's config-driven style)
+
+```bash
+python -m preproc.cli batch --config config/pipeline.example.yml --extra-args "--dry-run"
+```
+
+### YAML design
+
+- `pipeline.stages`: defines stage order (for example `heudiconv -> mriqc -> fmriprep -> xcpd`)
+- `args`: shared options applied to all stages
+- `stage_args.<stage>`: stage-specific overrides
+
+See `config/pipeline.example.yml` for a full example.
+
+## Relationship with legacy R scripts
+
+- `R/` and `preprocess/*.R` are still available for compatibility and historical reference.
+- New features and ongoing maintenance should prioritize the Python implementation.

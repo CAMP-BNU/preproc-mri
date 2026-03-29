@@ -1,0 +1,19 @@
+pipeline:
+  name: default-fmri
+  stages: [heudiconv, mriqc, fmriprep, xcpd]
+
+args:
+  site: TJNU
+  max_jobs: 10
+  queue: long.q
+  rerun: unprocessed
+
+stage_args:
+  heudiconv:
+    sid: ["001", "002"]
+    session: ses-1
+  fmriprep:
+    skip_session_check: true
+    clean_last: none
+  xcpd:
+    config_params: default

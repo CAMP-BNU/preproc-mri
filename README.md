@@ -1,45 +1,63 @@
-# Pre-processing MRI data
+# preproc-mri (Python-first)
 
-This repository contains the code for pre-processing MRI data. The codes are highly customized for the data we have. However, the codes can be used as a reference for pre-processing MRI data.
+This repository manages MRI preprocessing workflows. **Python is now the recommended primary implementation**, while R scripts are retained for backward compatibility and reference.
 
-## Requirements
+## 1. Recommended processing stages
 
-R and python are required to run the codes. Additionally, we utilize a lot of containers including heudiconv, mriqc and fmriprep. Please refer to the [BIDS documentation](https://bids.neuroimaging.io/) for more information.
+Use the following stage order:
 
-## Usage
+1. `heudiconv`: DICOM → BIDS
+2. `mriqc`: quality control
+3. `fmriprep`: functional preprocessing
+4. `xcpd`: post-processing for connectivity workflows
 
-Pre-processing is done with the following steps:
+You can run stages individually or use the YAML-driven `batch` command.
 
-1. Convert DICOM files to BIDS format: `./preprocess/perform_heudiconv.R`. Run `./preprocess/perform_heudiconv.R -h` for more information.
-2. Run MRIQC: `./preprocess/perform_mriqc.R`. Run `./preprocess/perform_mriqc.R -h` for more information.
-3. Run pre-processing for functional data (i.e., fmriprep): `./preprocess/perform_fmriprep.R`. Run `./preprocess/perform_fmriprep.R -h` for more information.
+## 2. Python environment setup
 
-## Notes
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Use the matching activation command on Windows
+pip install -r requirements.txt
+```
 
-The repository is organized into the following structure:
+Recommended environment variable:
 
-- Data Folders:
-  - Folder `sourcedata`: contains the DICOM files.
-  - Folder `rawdata`: contains the BIDS format data.
-  - Folder `bids_db`: contains the database of BIDS Layout. This is used to speed up the pre-processing.
-  - Folder `derivatives`: contains the pre-processed data.
-  - Folder `backup`: contains backup data which are deemed obsolete.
-  - Folder `tmp`: contains the temporary files generated during the pre-processing (mostly will be deleted after the pre-processing automatically).
-  - Folder `logs`: contains the log files generated during the pre-processing by the cluster.
-- Code Folders:
-  - Folder `R`: contains the R scripts to do the pre-processing.
-  - Folder `preprocess`: contains the end point script to do the pre-processing.
-  - Folder `template`: contains the template files (you can find the shell and python templates here) to do the pre-processing.
+```bash
+export PROJECT_ROOT=$(pwd)
+```
 
-### fMRIprep
+## 3. Single-stage examples
 
-For storage considerations, we specified the outspaces as:
+```bash
+python -m preproc.cli heudiconv --site TJNU --sid 001 --session ses-1 --dry-run
+python -m preproc.cli mriqc --subject sub-TJNU001 --dry-run
+python -m preproc.cli fmriprep --site TJNU --sid 001 --dry-run
+python -m preproc.cli xcpd --site TJNU --sid 001 --dry-run
+```
 
-- `MNI152NLin6Asym`: we do not include `MNI152NLin2009cAsym`.
-- `anat`: T1 weighted non-standard space.
-- `fsaverage6`: freesurfer's surface based space.
-- `fsLR`: aka CIFTI output.
+## 4. Batch mode (config-driven, recommended)
 
-## TODO
+Run all configured stages from one YAML file:
 
-ICA-AROMA was removed from fmriprep since 23.1.0, and a custom ICA-AROMA workflow is required.
+```bash
+python -m preproc.cli batch --config config/pipeline.example.yml --extra-args "--dry-run"
+```
+
+- `--only` runs only selected stages (repeatable flag).
+- `--extra-args` forwards additional args to every stage (e.g., `--dry-run`, `--queue`).
+
+## 5. Repository layout
+
+- `preproc/`: primary Python implementation
+- `scripts/`: Python entry scripts per stage
+- `config/`: configuration examples (including batch YAML)
+- `template/`: qsub and workflow templates
+- `R/`, `preprocess/*.R`: legacy R implementation (compatibility/reference)
+- `sourcedata/`, `rawdata/`, `derivatives/`, etc.: data folders
+
+## 6. Notes
+
+- The workflow and templates are customized to this project's data conventions.
+- Cluster submission depends on `qsub` and corresponding runtime/container images (e.g., heudiconv, mriqc, fmriprep, xcp_d).
+- BIDS reference: https://bids.neuroimaging.io/
